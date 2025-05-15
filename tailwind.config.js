@@ -7,6 +7,10 @@ module.exports = {
     extend: {
       colors: {
         primary: '#FFFFFF', 
+      },
+
+      fontFamily: {
+        EncodeSans: ['EncodeSans'],
       }
     },
   },

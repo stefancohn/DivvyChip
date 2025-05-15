@@ -1,6 +1,6 @@
-import { Link } from "expo-router";
-import { TextInput, View, Image } from "react-native";
+import { TextInput, View, Image, Text } from "react-native";
 import {images} from "../backend/constants"
+import InputBox from "./components/inputBox";
 
 export default function Index() {
   return (
@@ -12,11 +12,16 @@ export default function Index() {
       </View>
 
       {/* MIDDLE section - input for buy in */}
-      <View className="flex-1 items-center">
-        <TextInput
-          className="bg-[#D9D9D9]/90 rounded-[0.625rem] w-[18rem] h-[2.5rem] p-2 text-center"  
-          style={{boxShadow: "inset 0px 4px 3px 3px rgba(0,0,0,0.25)" , }}
-        />
+      <View className="flex-1 items-center gap-4">
+      
+        {/* Text input box 
+        Wrap in this to get inside shadow */}
+        <View className="p-[2px] bg-[#FF0000]/70 rounded-[0.625rem]">
+          <InputBox fontSize={20} width={280} height={40}/>
+        </View>
+
+        {/* Undertext */}
+        <Text className="font-EncodeSans text-3xl text-white/50">Enter Buy-in</Text>
 
       </View>
     </View>

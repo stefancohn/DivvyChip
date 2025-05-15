@@ -3,6 +3,8 @@ import "./globals.css"
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { StyleSheet } from "react-native";
+import { fonts } from '../backend/constants';
+import { useFonts } from 'expo-font';
 
 function RadialBackground() {
   return (
@@ -22,6 +24,11 @@ function RadialBackground() {
 }
 
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    EncodeSans: fonts.encodeSans,
+    EncodeSansBold: fonts.encodeSansBold,
+  });
+  
   return (
     <SafeAreaProvider>
     <RadialBackground/>
