@@ -1,4 +1,4 @@
-import { TextInput } from "react-native";
+import { TextInput, View } from "react-native";
 
 type Props = {
     width : any,
@@ -8,15 +8,18 @@ type Props = {
 
 
 export default function InputBox({width, height, fontSize} : Props) {
+    {/* Wrap in this to get inside shadow */}
     return (
-        <TextInput
-            className="bg-[#D9D9D9]/90 rounded-[0.625rem] p-2 text-center font-EncodeSans"  
-            style={{
-                boxShadow: "inset 0px 4px 3px 3px rgba(0,0,0,0.25)", 
-                fontSize,
-                width,
-                height,
-            }}
-        />
+        <View className="p-[2px] bg-[#FF0000]/70 rounded-[0.625rem]">
+            <TextInput
+                className="bg-[#D9D9D9]/90 rounded-[0.625rem] p-2 text-center font-EncodeSans"  
+                style={{
+                    boxShadow: "inset 0px 4px 3px 3px rgba(0,0,0,0.25)", 
+                    fontSize,
+                    width,
+                    height,
+                }}
+            />
+        </View>
     );
 }

@@ -1,5 +1,6 @@
 export const images = {
     logoWithText: require('../assets/images/LogoWithText.png'),
+    premium: require('../assets/images/premium-img.png'),
 }
 
 export const fonts = {
