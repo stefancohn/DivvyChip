@@ -1,13 +1,15 @@
-import { TextInput, View } from "react-native";
+import { Keyboard, TextInput, View } from "react-native";
 
 type Props = {
     width : any,
     height : any,
     fontSize: any,
+    value: any,
+    setValue: (arg : any) => void,
 }
 
 
-export default function InputBox({width, height, fontSize} : Props) {
+export default function NumInputBox({width, height, fontSize, value, setValue} : Props) {
     {/* Wrap in this to get inside shadow */}
     return (
         <View className="p-[2px] bg-[#FF0000]/70 rounded-[0.625rem]">
@@ -18,6 +20,12 @@ export default function InputBox({width, height, fontSize} : Props) {
                     fontSize,
                     width,
                     height,
+                }}
+                keyboardType="numeric"
+                returnKeyType="done"
+                onSubmitEditing={Keyboard.dismiss}
+                onChangeText={(text) => {
+                    setValue(text);
                 }}
             />
         </View>

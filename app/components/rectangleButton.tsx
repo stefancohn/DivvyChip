@@ -23,9 +23,9 @@ function RedRadialBg({ width, height }: { width: any; height: any }) {
     return (
       <Svg height={height} width={width} style={StyleSheet.absoluteFillObject}>
         <Defs>
-          <RadialGradient id="grad" cx="50%" cy="50%" r="70%">
+          <RadialGradient id="grad" cx="50%" cy="50%" r="60%">
             <Stop offset="0" stopColor="#FF0000" stopOpacity="1" />
-            <Stop offset="0.32" stopColor="#AF0000" stopOpacity="1" />
+            <Stop offset="0.4" stopColor="#AF0000" stopOpacity="1" />
             <Stop offset="0.97" stopColor="#7E0000" stopOpacity="1" />
           </RadialGradient>
         </Defs>

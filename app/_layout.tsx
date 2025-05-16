@@ -7,6 +7,7 @@ import { fonts } from '../backend/constants';
 import { useFonts } from 'expo-font';
 import { images } from "../backend/constants";
 import { Image } from "react-native";
+import { ChipProvider } from './components/ChipProvider';
 
 function RadialBackground() {
   return (
@@ -33,9 +34,10 @@ export default function RootLayout() {
   
   return (
     <SafeAreaProvider>
+    <ChipProvider>
       <RadialBackground/>
 
-      <SafeAreaView className="flex-1" edges={['left', 'right', 'top', 'bottom']}>
+      <SafeAreaView style={{flex:1}} edges={['left', 'right', 'top', 'bottom']}>
 
         <Image 
           source={images.premium}
@@ -49,14 +51,13 @@ export default function RootLayout() {
 
         {/* Stack implcitily holds a View box, by changing contentStyle we can change that implicit box */}
         <Stack screenOptions={{headerShown: false, contentStyle: {backgroundColor: 'transparent'}}}>
-          <Stack.Screen name="index" options={{title: "Divvy Chip"}} />
-          <Stack.Screen name="divchip" options={{title: "Buy In"}} />
-          <Stack.Screen name="cashout" options={{title: "Cash Out"}} />
-          <Stack.Screen name="config" options={{title: "Configuration"}} />
+          <Stack.Screen name="index" options={{title: "Divvy Chip", }} />
+          <Stack.Screen name="divchip" options={{title: "Buy In", animation:"default"}} />
         </Stack>
 
       </SafeAreaView>
-
+    
+    </ChipProvider>
     </SafeAreaProvider>
   );
 }
