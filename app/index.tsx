@@ -55,7 +55,7 @@ export default function Index() {
 
       {/* MIDDLE TOP section - input for buy in, go button */}
       <View className="items-center gap-2" style={{flex: 0.9}}>
-        <NumInputBox fontSize={20} width={200} height={32} value={buyIn} setValue={setBuyIn}/>
+        <NumInputBox fontSize={20} width={200} height={32} setValue={setBuyIn}/>
 
         {/* Undertext */}
         <Text className="font-EncodeSans text-[1.8rem] text-white/50">Enter Buy-in</Text>

@@ -8,6 +8,7 @@ import { useFonts } from 'expo-font';
 import { images } from "../backend/constants";
 import { Image } from "react-native";
 import { ChipProvider } from './components/ChipProvider';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function RadialBackground() {
   return (
@@ -31,6 +32,8 @@ export default function RootLayout() {
     EncodeSans: fonts.encodeSans,
     EncodeSansBold: fonts.encodeSansBold,
   });
+
+  const insets = useSafeAreaInsets();
   
   return (
     <SafeAreaProvider>
@@ -46,7 +49,7 @@ export default function RootLayout() {
             width: 115,
             height: 40,
             marginLeft: 25,
-            marginTop:50,
+            marginTop:insets.top + 5,
             position: 'absolute',
             top: 0,
             left: 0,
