@@ -1,11 +1,22 @@
 import React, { createContext, useContext, useState } from 'react';
+import {ChipProfile} from "../../backend/chipDivsionAlgo";
 
 //we need the buyin and chips to be global
 type ChipContextType = {
     buyIn: string;
-    chips: number[];
     setBuyIn: (arg: string) => void;
-    setChips: (arg: number[]) => void;
+    
+    totalCount : number;
+    setTotalCount : (arg : number) => void;
+
+    diffColors : number;
+    setDiffColors : (arg : number) => void;
+
+    countDistribution : number[];
+    setCountDistribution : (arg : number[]) => void;
+
+    chipProfiles : ChipProfile[];
+    setChipProfiles : (arg : ChipProfile[])=>void;
 };
 
 //create our context
@@ -14,13 +25,17 @@ const ChipContext = createContext<ChipContextType | null>(null);
 //create our provider wrapper which initializes our vals
 export const ChipProvider = ({ children } : {children : React.ReactNode}) => {
     const [buyIn, setBuyIn] = useState('');
-    const [chips, setChips] = useState<number[]>([]);
+    const [totalCount, setTotalCount] = useState(25);
+    const [diffColors, setDiffColors] = useState(2);
+    const [countDistribution, setCountDistribution] = useState([.80, .20]);
+    const [chipProfiles, setChipProfiles] = useState<ChipProfile[]>([]);
 
     return (
         //when we do <ChipProvider>...</ChipProvider>, everything inbetween is 
         //taken as the paramter. so when we receive it, we just spit back
         //all of the children just wrapped with this for global use
-        <ChipContext.Provider value={{buyIn, chips, setBuyIn, setChips}}>
+        <ChipContext.Provider value={{buyIn, setBuyIn, totalCount, setTotalCount, 
+        diffColors, setDiffColors, countDistribution, setCountDistribution, chipProfiles, setChipProfiles}}>
             {children}
         </ChipContext.Provider>
     )

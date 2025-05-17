@@ -45,7 +45,11 @@ export default function RootLayout() {
           style={{
             width: 115,
             height: 40,
-            marginLeft: 20,
+            marginLeft: 25,
+            marginTop:50,
+            position: 'absolute',
+            top: 0,
+            left: 0,
           }}
         />
 

@@ -22,18 +22,18 @@ function validBuyIn (value:string): boolean {
   return false;
 }
 
-var defDiffColors = 2;
-var defTotalCount = 25; 
-var defCountDistribution=[.75,.25]
-
 export default function Index() {
+  //get router and context vars
   const router = useRouter();
-  const {buyIn : buyIn, setBuyIn} = useChipContext();
+  const {buyIn : buyIn, setBuyIn, diffColors, totalCount, 
+    countDistribution, setChipProfiles} = useChipContext();
 
+  //func for when go gets pressed
   const handleGo = () => {
     //validify
     if (validBuyIn(buyIn)) {
-      var numArr = chipDistribution(Number(buyIn), defDiffColors, defTotalCount, defCountDistribution);
+      var distRes = chipDistribution(Number(buyIn), diffColors, totalCount, countDistribution);
+      setChipProfiles(distRes);
 
       router.push('./divchip');
     } 
