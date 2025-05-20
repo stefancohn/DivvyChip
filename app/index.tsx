@@ -2,7 +2,7 @@ import { View, Image, Text } from "react-native";
 import {images} from "../backend/constants"
 import NumInputBox from "./components/inputBox";
 import RectangleButton from "./components/rectangleButton";
-import { chipDistribution } from "../backend/chipDivsionAlgo";
+import { getDistributionVariants, chipDistribution } from "../backend/chipDivsionAlgo";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useChipContext } from "./components/ChipProvider";
@@ -34,6 +34,8 @@ export default function Index() {
     if (validBuyIn(buyIn)) {
       var distRes = chipDistribution(Number(buyIn), diffColors, totalCount, countDistribution);
       setChipProfiles(distRes);
+
+      (getDistributionVariants(countDistribution, diffColors));
 
       router.push('./divchip');
     } 

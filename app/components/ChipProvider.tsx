@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import {ChipProfile} from "../../backend/chipDivsionAlgo";
+import {ChipProfile, getDistributionVariants} from "../../backend/chipDivsionAlgo";
 
 //we need the buyin and chips to be global
 type ChipContextType = {
@@ -15,6 +15,9 @@ type ChipContextType = {
     countDistribution : number[];
     setCountDistribution : (arg : number[]) => void;
 
+    distributionVariants : number[][];
+    setDistributionVariants : (arg : number[][]) => void; 
+
     chipProfiles : ChipProfile[];
     setChipProfiles : (arg : ChipProfile[])=>void;
 };
@@ -28,6 +31,7 @@ export const ChipProvider = ({ children } : {children : React.ReactNode}) => {
     const [totalCount, setTotalCount] = useState(20);
     const [diffColors, setDiffColors] = useState<number>(2);
     const [countDistribution, setCountDistribution] = useState([.80, .20,0,0,0,0]);
+    const [distributionVariants, setDistributionVariants] = useState<number[][]>(getDistributionVariants(countDistribution, diffColors));
     const [chipProfiles, setChipProfiles] = useState<ChipProfile[]>([]);
 
     return (
@@ -35,7 +39,8 @@ export const ChipProvider = ({ children } : {children : React.ReactNode}) => {
         //taken as the paramter. so when we receive it, we just spit back
         //all of the children just wrapped with this for global use
         <ChipContext.Provider value={{buyIn, setBuyIn, totalCount, setTotalCount, 
-        diffColors, setDiffColors, countDistribution, setCountDistribution, chipProfiles, setChipProfiles}}>
+        diffColors, setDiffColors, countDistribution, setCountDistribution, distributionVariants, 
+        setDistributionVariants, chipProfiles, setChipProfiles}}>
             {children}
         </ChipContext.Provider>
     )

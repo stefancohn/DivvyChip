@@ -2,35 +2,28 @@ import { TouchableOpacity, View, Text, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useChipContext } from './components/ChipProvider';
 import NumInputBox from './components/inputBox';
-import { chipDistribution } from '@/backend/chipDivsionAlgo';
+import { getDistributionVariants, chipDistribution } from '@/backend/chipDivsionAlgo';
 import ChipDisplay from './components/ChipDisplay';
 import CircleButton from './components/CircleButton';
 import Slider from "@react-native-community/slider";
 import { useEffect, useRef } from 'react';
 
 const defDistributions : number[][] = [
-    [.80, .20,0,0,0,0],
-    [.50, .35,.15,0,0,0],
-    [.40, .30, .20, .10,0,0],
+    [0.8, 0.2, 0, 0, 0, 0],
+    [0.5, 0.35, 0.15, 0, 0, 0],
+    [0.4, 0.3, 0.2, 0.1, 0, 0],
     [.80, .20,0,0,0,0],
     [.80, .20,0,0,0,0],
 ]
-
-//.25 .35. 25 .15
-//. 30 .35 .25 .10
-// .35 .35 .20 .10
-//     .40, 0.30 .20, .0.10
-// .45, 0.3, 0.2 0.05
-//.50, 0.3, .15, 0.05
-//.55, 0.25, 0.15, 0.05
 
 export default function DivChip() {
     //get router and context vars
     const router = useRouter();
     const {buyIn : buyIn, setBuyIn, diffColors, setDiffColors, totalCount, setTotalCount,
-    countDistribution, setCountDistribution, setChipProfiles, chipProfiles} = useChipContext();
+    countDistribution, setCountDistribution, distributionVariants, setDistributionVariants,
+    setChipProfiles, chipProfiles} = useChipContext();
+
     const previousSliderChip = useRef(5);
-    console.log(chipProfiles);
     
     //when chip button gets pressed, properly change diff chip amt
     //and recalculate distribution
@@ -41,6 +34,8 @@ export default function DivChip() {
         setDiffColors(next);
 
         setCountDistribution(defDistributions[next-2]);
+
+        setDistributionVariants(getDistributionVariants(defDistributions[next-2],next));
 
         //update chip profiles
         var distRes = chipDistribution(Number(buyIn), next, totalCount, defDistributions[next-2]);
@@ -62,41 +57,24 @@ export default function DivChip() {
     //convert the slider value to appropriate
     //change in distributions
     const onSliderChange = (value: any) => {
-        //set previousSliderChip to amt of diffcolors
-        if (previousSliderChip.current > diffColors-1) {
-            previousSliderChip.current=diffColors-1;
-        }
-
-        //get change - this is all based on first dist val
-        var valChange : number = (value - chipProfiles[0].distribution);
-        valChange = Math.round((valChange*100))/100
-
-        //get shallow copy
-        var newDist : number[] = [...countDistribution];
-
-        //update values appropriately
-        newDist[0] = Math.round((newDist[0] + valChange)*100)/100;
-        
-        newDist[previousSliderChip.current]= Math.round((newDist[previousSliderChip.current]-valChange)*100)/100;
-        //if value is already 0, keep at 0
-        if (newDist[previousSliderChip.current] < 0) {
-            newDist[previousSliderChip.current]=0;
-            //we don't want neg values adding to first chip
-            newDist[0] -= 0.05;
-        }
-
-        //move percentage from highest 2nd lowest iteratively
-        previousSliderChip.current--;
-        if(previousSliderChip.current == 0) {
-            previousSliderChip.current=diffColors-1;
-        }
-
-        setCountDistribution(newDist);
-
-        //update chip profiles
-        var distRes = chipDistribution(Number(buyIn), diffColors, totalCount, newDist);
+        const distRes = chipDistribution(Number(buyIn), diffColors, totalCount, distributionVariants[value]);
         setChipProfiles(distRes);
     }
+
+    //need to find current by searching variants for def
+    const getSliderValue = () => {
+        function arraysEqual(a: number[], b: number[]) {
+            return a.every((val, index) => val === b[index]);
+        }
+
+        for (var i = 0; i < distributionVariants.length; i++) {
+            if (arraysEqual(defDistributions[diffColors-2], distributionVariants[i])){
+                return(i)
+            }
+        }
+    }
+
+    getSliderValue();
 
     return(
         <View style={{flex: 1, alignItems: 'center', flexDirection:"column"}}>
@@ -109,7 +87,7 @@ export default function DivChip() {
             {/* Coin Display */}
             <View className="flex-1 align-top flex-col justify-start m-16">
                 {/* For 2 chip, iterate over profiles! */}
-                {(diffColors == 2 || diffColors ==3) && 
+                {(diffColors == 2 || diffColors ==3 ) && 
                     <View style={{flexDirection: "row", gap: 50}}>
                         {chipProfiles.map((profile, index) => (
                             <ChipDisplay profile={profile} key={index}/>
@@ -127,9 +105,9 @@ export default function DivChip() {
                     minimumTrackTintColor='#1C7D2F'
                     maximumTrackTintColor='#571F1F'
                     minimumValue={0}
-                    maximumValue={1}
-                    step={0.05}
-                    value={chipProfiles[0].distribution}
+                    maximumValue={distributionVariants.length-1}
+                    step={1}
+                    value={getSliderValue()}
                     onValueChange={onSliderChange}
                 />
             </View>

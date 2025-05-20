@@ -72,3 +72,67 @@ export function chipDistribution(buyIn : number, diffChips: number, totalChips :
 
     return chipProfiles;
 }
+
+//.05 .45 .30 .20
+//.10 .40 .30 .20
+//.15 .40 .30 .15
+//.20 .40 .25 .15
+//.25 .35. 25 .15
+//. 30 .35 .25 .10
+// .35 .35 .20 .10
+//     .40, 0.30 .20, .0.10
+// .45, 0.3, 0.2 0.05
+//.50, 0.3, .15, 0.05
+//.55, 0.25, 0.15, 0.05
+
+//returns all different variations of distribution
+export function getDistributionVariants(distribution : number[], diffColors : number) {
+    var allVariants : number[][] = [];
+
+    //shallow copy 
+    var distributionC = [...distribution];
+
+    allVariants.push([...distributionC]);
+
+    //keep taking away from dist[0] until it reaches
+    //0.05
+    var counter = 1;
+    while(distributionC[0] > 0.05) {
+        distributionC[0]-=0.05;
+        distributionC[counter]+=0.05;
+
+        //round
+        distributionC[0] = Math.round(distributionC[0]*100)/100;
+        distributionC[counter] = Math.round(distributionC[counter]*100)/100;
+
+        counter++;
+        if (counter>=diffColors) {
+            counter=1; 
+        }
+        allVariants.push([...distributionC]);
+    }
+
+    //reverse the list so it is in proper order!
+    allVariants.reverse();
+
+    distributionC = [...distribution]; //reset to og arr
+    //keep adding to dist[0] until max element reaches .05
+    var maxE = diffColors-1;
+    var incCounter = maxE;
+    while(distributionC[maxE] > 0.05) {
+        distributionC[0]+=0.05;
+        distributionC[incCounter]-=0.05;
+
+        //round
+        distributionC[0] = Math.round(distributionC[0]*100)/100;
+        distributionC[incCounter] = Math.round(distributionC[incCounter]*100)/100;
+
+        incCounter--;
+        if (incCounter <= 0) {
+            incCounter = maxE;
+        }
+        allVariants.push([...distributionC]);
+    }
+
+    return allVariants;
+}
