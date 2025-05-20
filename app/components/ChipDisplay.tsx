@@ -1,37 +1,64 @@
 import { View, Image, Text } from "react-native";
 import { images } from "../../backend/constants";
-import Svg, { Circle, Defs, FeGaussianBlur } from 'react-native-svg';
+import { ChipProfile } from "@/backend/chipDivsionAlgo";
 
 type Props = {
-    color : string,
+    profile : ChipProfile,
+    key?: any,
 };
 
-export default function ChipDisplay({color} : Props) {
-    return (
-        <View style={{position: "relative",}}>
-            {/* Circle */}
-            <View style={{
-                position: 'absolute', 
-                width: "100%", 
-                height: "100%", 
-                borderRadius: 100, 
-                backgroundColor: color,
-            }}/>
+var size = 85;
 
-            {/* Shadow */}
-            <View style={{
-                position: 'absolute', 
-                width: "100%", 
-                height: "100%",
-                opacity: 0.4,
-                shadowColor: color,
-                shadowOffset: { width: 0, height: 0 },
-                shadowOpacity: 0.8,
-                shadowRadius: 10,
-                borderRadius: 100, 
-                backgroundColor: color,
-            }}/>
-            <Image source={images.baseChip} resizeMode="contain" style={{width:100, height:100, margin: 0}}/>
+export default function ChipDisplay({profile} : Props) {
+    return (
+        <View className="gap-2">
+            {/* Chip Img with circle & blur under */}
+            <View style={{position: "relative",}}>
+                {/* Circle */}
+                <View style={{
+                    position: 'absolute', 
+                    width: "100%", 
+                    height: "100%", 
+                    borderRadius: size, 
+                    backgroundColor: profile.color,
+                }}/>
+
+                {/* Shadow */}
+                <View style={{
+                    position: 'absolute', 
+                    width: "100%", 
+                    height: "100%",
+                    opacity: 0.4,
+                    shadowColor: profile.color,
+                    shadowOffset: { width: 0, height: 0 },
+                    shadowOpacity: 0.8,
+                    shadowRadius: 10,
+                    borderRadius: size, 
+                    backgroundColor: profile.color,
+                }}/>
+                <Image source={images.baseChip} resizeMode="contain" style={{width:size, height:size, margin: 0}}/>
+            </View>
+
+            <Text style={{
+                fontFamily: "EncodeSansBold", 
+                color: profile.color, 
+                textAlign: "center",
+                overflow: "hidden",
+                maxWidth: size,
+            }}>
+                {profile.amount + " count"}
+            </Text>
+            <Text style={{
+                fontFamily: "EncodeSans", 
+                color: profile.color, 
+                textAlign: "center",
+                overflow: "hidden",
+                maxWidth: size,
+                marginTop: -7,
+                fontSize: 16
+            }}>
+                {profile.value * .01}
+            </Text>
         </View>
     );
 }

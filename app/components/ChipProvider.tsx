@@ -25,8 +25,8 @@ const ChipContext = createContext<ChipContextType | null>(null);
 //create our provider wrapper which initializes our vals
 export const ChipProvider = ({ children } : {children : React.ReactNode}) => {
     const [buyIn, setBuyIn] = useState('');
-    const [totalCount, setTotalCount] = useState(25);
-    const [diffColors, setDiffColors] = useState(2);
+    const [totalCount, setTotalCount] = useState(20);
+    const [diffColors, setDiffColors] = useState<number>(2);
     const [countDistribution, setCountDistribution] = useState([.80, .20,0,0,0,0]);
     const [chipProfiles, setChipProfiles] = useState<ChipProfile[]>([]);
 
