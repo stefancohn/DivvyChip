@@ -52,3 +52,5 @@ export const useChipContext = () => {
     if (!context) throw new Error('useChipContext must be used within ChipProvider');
     return context;
 };
+
+export default ChipProvider;

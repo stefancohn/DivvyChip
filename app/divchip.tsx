@@ -1,4 +1,4 @@
-import { TouchableOpacity, View, Text, Image } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useChipContext } from './components/ChipProvider';
 import NumInputBox from './components/inputBox';
@@ -6,15 +6,27 @@ import { getDistributionVariants, chipDistribution } from '@/backend/chipDivsion
 import ChipDisplay from './components/ChipDisplay';
 import CircleButton from './components/CircleButton';
 import Slider from "@react-native-community/slider";
-import { useEffect, useRef } from 'react';
+import { useState } from 'react';
 
 const defDistributions : number[][] = [
     [0.8, 0.2, 0, 0, 0, 0],
     [0.5, 0.35, 0.15, 0, 0, 0],
     [0.4, 0.3, 0.2, 0.1, 0, 0],
-    [.80, .20,0,0,0,0],
-    [.80, .20,0,0,0,0],
+    [.4, .25,15,0.12,0.08,0],
+    [0.30, 0.25, 0.18, 0.13, 0.09, 0.05],
 ]
+
+//for polar coordinates for chip placements
+//need different radius for diff chip amounts
+const getRadius = (diffColors:number) : number => {
+    var arr = [80, 120, 100, 120, 120];
+    return(arr[diffColors]);
+}
+const getChipSize = (diffColors:number) : number => {
+    var arr = [80, 80, 70, 70, 60];
+    return(arr[diffColors])
+};
+
 
 export default function DivChip() {
     //get router and context vars
@@ -22,9 +34,14 @@ export default function DivChip() {
     const {buyIn : buyIn, setBuyIn, diffColors, setDiffColors, totalCount, setTotalCount,
     countDistribution, setCountDistribution, distributionVariants, setDistributionVariants,
     setChipProfiles, chipProfiles} = useChipContext();
-
-    const previousSliderChip = useRef(5);
+    const [wrapperDimensions, setWrapperDimensions] = useState({ width: 0, height: 0 });
     
+    //get dimension of a view
+    const handleWrapperLayout = (event: any) => {
+        const { width, height } = event.nativeEvent.layout;
+        setWrapperDimensions({ width, height });
+    };
+
     //when chip button gets pressed, properly change diff chip amt
     //and recalculate distribution
     const changeDiffColor = () => {
@@ -74,7 +91,6 @@ export default function DivChip() {
         }
     }
 
-    getSliderValue();
 
     return(
         <View style={{flex: 1, alignItems: 'center', flexDirection:"column"}}>
@@ -85,15 +101,23 @@ export default function DivChip() {
             </View>
 
             {/* Coin Display */}
-            <View className="flex-1 align-top flex-col justify-start m-16">
+            <View style={{flex: 1.5}} onLayout={handleWrapperLayout}>
                 {/* For 2 chip, iterate over profiles! */}
-                {(diffColors == 2 || diffColors ==3 ) && 
-                    <View style={{flexDirection: "row", gap: 50}}>
-                        {chipProfiles.map((profile, index) => (
-                            <ChipDisplay profile={profile} key={index}/>
-                        ))}
-                    </View>                
-                }
+                {chipProfiles.map((profile, index) => {
+                    var chipSize = getChipSize(diffColors-2);
+
+                    var angle : number = (2*Math.PI)/diffColors;
+                    var centerY: number = (wrapperDimensions.height/2) - (chipSize/2);
+
+                    var x : number =(Math.cos((angle*index)+(Math.PI/2)) * getRadius(diffColors-2)) - (chipSize/2);
+                    var y : number = (Math.sin((angle*index)-(Math.PI/2)) * getRadius(diffColors-2)) + (centerY);
+
+                    return (
+                        <View key={index} style={{position: "absolute", left:x, top: y, }}>
+                            <ChipDisplay profile={profile} key={index} size={chipSize}/>
+                        </View>
+                    );
+                })}
             </View>
 
             {/* Middle Section - chip amount, dist slider, new buy-in */}

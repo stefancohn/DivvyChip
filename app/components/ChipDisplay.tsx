@@ -3,13 +3,12 @@ import { images } from "../../backend/constants";
 import { ChipProfile } from "@/backend/chipDivsionAlgo";
 
 type Props = {
-    profile : ChipProfile,
+    profile: ChipProfile,
     key?: any,
+    size?: any,
 };
 
-var size = 85;
-
-export default function ChipDisplay({profile} : Props) {
+export default function ChipDisplay({ profile, size = 85 }: Props) {
     return (
         <View className="gap-2">
             {/* Chip Img with circle & blur under */}
