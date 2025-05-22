@@ -1,26 +1,10 @@
 import { View, Image, Text } from "react-native";
-import {images} from "../backend/constants"
+import {images, validBuyIn} from "../backend/constants"
 import NumInputBox from "./components/inputBox";
 import RectangleButton from "./components/rectangleButton";
 import { getDistributionVariants, chipDistribution } from "../backend/chipDivsionAlgo";
 import { useRouter } from "expo-router";
-import { useState } from "react";
 import { useChipContext } from "./components/ChipProvider";
-
-//func to validify we receive a string that represent
-//a valid money value, i.e. 32, 1.3, 2.43, .12
-function validBuyIn (value:string): boolean {
-  const regex : RegExp = /^(?:\d+|\d*\.\d{1,2})$/
-  const regexMatch = regex.test(value);
-
-  //if we get a format match, let's ensure 
-  //the value is atleast <= 1
-  if (regexMatch && Number(value) >= 1.00) {
-    return true;
-  }
-
-  return false;
-}
 
 export default function Index() {
   //get router and context vars

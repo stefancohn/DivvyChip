@@ -22,7 +22,7 @@ function defaultChipProfileInit() : ChipProfile[] {
     ];
 }
 
-var colors : string[] = ["white", "red", "green", "black", "blue", "orange"]
+var colors : string[] = ["white", "red", "green", "darkslategray", "blue", "orange"]
 
 //algo to split chips!
 export function chipDistribution(buyIn : number, diffChips: number, totalChips : number, countDistribution : number[]) {
@@ -33,7 +33,7 @@ export function chipDistribution(buyIn : number, diffChips: number, totalChips :
     var smallBlind = buyIn * .01;
 
     //TODO: code different progression factors
-    var progressionFactor = 6;
+    var progressionFactor = [2,2,1.5, 1.5];
 
     //high percentage:low val -> low percentage: high val
     var chipProfiles: ChipProfile[] = new Array(diffChips);
@@ -43,8 +43,9 @@ export function chipDistribution(buyIn : number, diffChips: number, totalChips :
     var currentCentsLeft : number= buyIn;
 
     //hard code first value as the small blind!
-    chipProfiles[0] = {value: currentVal, amount: (totalChips*countDistribution[0]), 
+    chipProfiles[0] = {value: currentVal, amount: Math.floor(totalChips*countDistribution[0]), 
         distribution: countDistribution[0], color: colors[0]}
+
     currentCentsLeft -= (chipProfiles[0].amount*chipProfiles[0].value);
     
     //initialize each chip profile, assigning it its distribution, amount, and val
@@ -56,11 +57,15 @@ export function chipDistribution(buyIn : number, diffChips: number, totalChips :
         //if a chip should be 15% of the chips, it should fill 
         //15% of the total buyin amount
         if (i!=chipProfiles.length-1) {
-            currentVal*=progressionFactor;
+            currentVal*=progressionFactor[i-1];
             currentCentsLeft-=(chipsToUse*currentVal);
         } else {
             currentVal = currentCentsLeft/chipsToUse;
         }
+
+        //floor 
+        currentVal = Math.floor(currentVal);
+        chipsToUse = Math.floor(chipsToUse);
 
         chipProfiles[i] = { 
             value: currentVal, 
@@ -72,18 +77,6 @@ export function chipDistribution(buyIn : number, diffChips: number, totalChips :
 
     return chipProfiles;
 }
-
-//.05 .45 .30 .20
-//.10 .40 .30 .20
-//.15 .40 .30 .15
-//.20 .40 .25 .15
-//.25 .35. 25 .15
-//. 30 .35 .25 .10
-// .35 .35 .20 .10
-//     .40, 0.30 .20, .0.10
-// .45, 0.3, 0.2 0.05
-//.50, 0.3, .15, 0.05
-//.55, 0.25, 0.15, 0.05
 
 //returns all different variations of distribution
 export function getDistributionVariants(distribution : number[], diffColors : number) {

@@ -1,4 +1,4 @@
-import { View, Text, Image } from 'react-native';
+import { View, Text, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useChipContext } from './components/ChipProvider';
 import NumInputBox from './components/inputBox';
@@ -7,13 +7,15 @@ import ChipDisplay from './components/ChipDisplay';
 import CircleButton from './components/CircleButton';
 import Slider from "@react-native-community/slider";
 import { useState } from 'react';
+import { validBuyIn } from '@/backend/constants';
+import RectangleButton from './components/rectangleButton';
 
 const defDistributions : number[][] = [
     [0.8, 0.2, 0, 0, 0, 0],
     [0.5, 0.35, 0.15, 0, 0, 0],
     [0.4, 0.3, 0.2, 0.1, 0, 0],
-    [.4, .25,15,0.12,0.08,0],
-    [0.30, 0.25, 0.18, 0.13, 0.09, 0.05],
+    [.4, .25, 0.15,0.12,0.08,0],
+    [0.35, 0.20, 0.18, 0.13, 0.09, 0.05],
 ]
 
 //for polar coordinates for chip placements
@@ -61,13 +63,17 @@ export default function DivChip() {
 
     //when user changes top right value, properly handle 
     //and recalculate distribution
-    const onTotalCountChange = (value : any) => {
+    const verifyNewTotalCount = (value : any) => {
+        if (value === "") {return}
+        
+        value = Number(value);
         //min of 10 chips 
-        if(value>=10){
+        if(value>=10 && Number.isInteger(value)){
             setTotalCount(value);
             var distRes = chipDistribution(Number(buyIn), diffColors, value, countDistribution);
             setChipProfiles(distRes);
-            console.log(chipProfiles);
+        } else {
+            alert("Total count must be greater than 10 and a whole number.");
         }
     }
 
@@ -91,18 +97,46 @@ export default function DivChip() {
         }
     }
 
+    const newBuyIn = (value : any) => {
+        if (value === "") {return}
 
+        if (validBuyIn(value)) {
+            setBuyIn(value);
+            var distRes = chipDistribution(value, diffColors, totalCount, countDistribution);
+            setChipProfiles(distRes);
+        } else {
+            alert('Please enter a valid amount (e.g., 5, 2.50, .99) of 1.00 or above. Only up to two decimal places are allowed.');
+        }
+    }
+
+    //The actual UI is here lol
     return(
         <View style={{flex: 1, alignItems: 'center', flexDirection:"column"}}>
             {/* TOTAL COUNT */}
             <View className="self-end mr-5 flex-col gap-2 flex-0.5">
                 <Text className="font-EncodeSansBold color-white">Total Count:</Text>
-                <NumInputBox width="100%" height={25} fontSize={20} setValue={onTotalCountChange} placeholderVal={String(totalCount)}/>
+                <NumInputBox width="100%" height={25} fontSize={20} onBlur={verifyNewTotalCount} placeholderVal={String(totalCount)}/>
             </View>
 
+            {/* Recommended Blinds */}
+            <Text style={{
+                fontSize: 15,
+                color: "white",
+                alignSelf: "flex-start",
+                fontFamily: "EncodeSansBold",
+                left: 20,
+                marginBottom: -45,
+                marginTop: 5
+            }}>
+                Small Blind: {" "}
+                <Text className="font-EncodeSans">{(chipProfiles[0].value*.01).toFixed(2)+"\n"}</Text> 
+                Big Blind: {" "}
+                <Text className="font-EncodeSans">{(chipProfiles[0].value*.01*2).toFixed(2)}</Text>
+            </Text>
+
             {/* Coin Display */}
-            <View style={{flex: 1.5}} onLayout={handleWrapperLayout}>
-                {/* For 2 chip, iterate over profiles! */}
+            <View style={{flex: 1.4}} onLayout={handleWrapperLayout}>
+                {/* Polar coordinates to get its proper position */}
                 {chipProfiles.map((profile, index) => {
                     var chipSize = getChipSize(diffColors-2);
 
@@ -121,10 +155,11 @@ export default function DivChip() {
             </View>
 
             {/* Middle Section - chip amount, dist slider, new buy-in */}
-            <View className='flex-1 gap-4 items-center'>
+            <View className='gap-4 items-center mt-5 mb-7' style={{flex: 0.8}}>
+
                 <CircleButton width={75} height={75} fontSize={18} text={diffColors + "\nChips"} onPress={changeDiffColor}/>
                 <Slider
-                    style={{width: 250}}
+                    style={{width: 270}}
                     thumbTintColor='gray'
                     minimumTrackTintColor='#1C7D2F'
                     maximumTrackTintColor='#571F1F'
@@ -133,6 +168,34 @@ export default function DivChip() {
                     step={1}
                     value={getSliderValue()}
                     onValueChange={onSliderChange}
+                />
+                {/* Tags under slider */}
+                <View style={{flexDirection: "row", width: Dimensions.get('window').width, justifyContent: "space-between"}}className="mt-[-0.85rem]">
+                    <Text className="font-EncodeSans self-start justify-self-start text-red-600 text-[1rem] ml-12">Less Blind Chips</Text>
+                    <Text className="font-EncodeSans self-end justify-self-end text-green-600 text-[1rem] mr-12">More Blind Chips</Text>
+                </View>
+
+                {/* New Buy In */}
+                <View style={{alignContent: "center", flexDirection: "column", gap:5}}>
+                    <NumInputBox 
+                        width={120} 
+                        height={50} 
+                        fontSize={20} 
+                        placeholderVal={String(buyIn)}
+                        onBlur={newBuyIn}
+                    />
+                    <Text style={{fontFamily: "EncodeSansBold", fontSize: 15, color: "gray", textAlign: "center"}}>New Buy-In</Text>
+                </View>
+            </View>
+
+            {/* BOTTOM SECTION - go to other section */}
+            <View style={{flexDirection: "row", justifyContent: "space-evenly", width: Dimensions.get('window').width, marginTop: 15}}>
+                <RectangleButton width={100} height={40} fontSize={16} red={true} text="NO BANK PAYOUT"
+                    style={{ marginLeft: 10}}
+                />
+                <RectangleButton width={100} height={40} fontSize={16} red={false} text="CONFIG/SETTINGS"/>
+                <RectangleButton width={100} height={40} fontSize={16} red={true} text="CHIP-TO-CASH"
+                    style={{ marginRight: 10, }}
                 />
             </View>
         </View>

@@ -7,11 +7,13 @@ type Props = {
     fontSize: any,
     setValue?: (arg? : any) => void,
     placeholderVal?: any;
+    onBlur? : any;
 }
 
 
-export default function NumInputBox({width, height, fontSize, setValue, placeholderVal} : Props) {
+export default function NumInputBox({width, height, fontSize, setValue, placeholderVal, onBlur} : Props) {
     const [focused, setFocused] = useState(true);
+    const [input, setInput] = useState("");
     
     {/* Wrap in this to get inside border */}
     return (
@@ -30,12 +32,18 @@ export default function NumInputBox({width, height, fontSize, setValue, placehol
                 onChangeText={(text) => {
                     if (setValue) {
                         setValue(text);
-                    }
+                    } 
+                    setInput(text);
                 }}
                 placeholder={placeholderVal && focused ? placeholderVal : ""}
                 placeholderTextColor={"black"}
                 onFocus={() => setFocused(false)}
-                onBlur={() => setFocused(true)}
+                onBlur={() => {
+                    setFocused(true);
+                    if (onBlur) {
+                        onBlur(input);
+                    }
+                }}
             />
         </View>
     );

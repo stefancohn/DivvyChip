@@ -43,20 +43,20 @@ export default function ChipDisplay({ profile, size = 85 }: Props) {
                 color: profile.color, 
                 textAlign: "center",
                 overflow: "hidden",
-                maxWidth: size,
+
             }}>
                 {profile.amount + " count"}
             </Text>
             <Text style={{
                 fontFamily: "EncodeSans", 
-                color: profile.color, 
+                color: "white", 
                 textAlign: "center",
                 overflow: "hidden",
                 maxWidth: size,
                 marginTop: -7,
                 fontSize: 16
             }}>
-                {profile.value * .01}
+                {(Math.round((profile.value * .01)*100)/100).toFixed(2)}
             </Text>
         </View>
     );
