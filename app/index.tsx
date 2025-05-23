@@ -54,7 +54,7 @@ export default function Index() {
 
       {/* BOTTOM SECTION - go to other section */}
       <RectangleButton width={120} height={70} fontSize={22} red={true} text="CHIP-TO-CASH"
-        style={{alignSelf: "flex-end", marginRight: 10}}
+        style={{alignSelf: "flex-end", marginRight: 10}} onPress={()=>router.push('./chiptocash')}
       />
     </View>
   );

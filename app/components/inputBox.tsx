@@ -5,19 +5,20 @@ type Props = {
     width : any,
     height : any,
     fontSize: any,
-    setValue?: (arg? : any) => void,
+    setValue?: (arg? : any, index? : number) => void,
     placeholderVal?: any;
     onBlur? : any;
+    index? : number;
 }
 
 
-export default function NumInputBox({width, height, fontSize, setValue, placeholderVal, onBlur} : Props) {
+export default function NumInputBox({width, height, fontSize, setValue, placeholderVal, onBlur, index} : Props) {
     const [focused, setFocused] = useState(true);
     const [input, setInput] = useState("");
     
     {/* Wrap in this to get inside border */}
     return (
-        <View className="p-[2px] bg-[#FF0000]/70 rounded-[0.625rem]">
+        <View className="p-[2px] bg-[#FF0000]/70 rounded-[0.625rem]" style={{}}>
             <TextInput
                 className="bg-[#D9D9D9]/90 rounded-[0.625rem] p-0 text-center font-EncodeSans"  
                 style={{
@@ -31,7 +32,7 @@ export default function NumInputBox({width, height, fontSize, setValue, placehol
                 onSubmitEditing={Keyboard.dismiss}
                 onChangeText={(text) => {
                     if (setValue) {
-                        setValue(text);
+                        setValue(text, index);
                     } 
                     setInput(text);
                 }}

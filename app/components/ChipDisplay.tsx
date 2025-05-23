@@ -6,11 +6,12 @@ type Props = {
     profile: ChipProfile,
     key?: any,
     size?: any,
+    showCount?: boolean
 };
 
-export default function ChipDisplay({ profile, size = 85 }: Props) {
+export default function ChipDisplay({ profile, size = 85, showCount=true }: Props) {
     return (
-        <View className="gap-2">
+        <View className="gap-2" style={{}}>
             {/* Chip Img with circle & blur under */}
             <View style={{position: "relative",}}>
                 {/* Circle */}
@@ -37,16 +38,20 @@ export default function ChipDisplay({ profile, size = 85 }: Props) {
                 }}/>
                 <Image source={images.baseChip} resizeMode="contain" style={{width:size, height:size, margin: 0}}/>
             </View>
+            
+            {/* Count and value text*/}
+            {showCount && 
+                <Text style={{
+                    fontFamily: "EncodeSansBold", 
+                    color: profile.color, 
+                    textAlign: "center",
+                    overflow: "hidden",
 
-            <Text style={{
-                fontFamily: "EncodeSansBold", 
-                color: profile.color, 
-                textAlign: "center",
-                overflow: "hidden",
+                }}>
+                    {profile.amount + " count"}
+                </Text>
+            }
 
-            }}>
-                {profile.amount + " count"}
-            </Text>
             <Text style={{
                 fontFamily: "EncodeSans", 
                 color: "white", 

@@ -60,6 +60,7 @@ export default function RootLayout() {
         <Stack screenOptions={{headerShown: false, contentStyle: {backgroundColor: 'transparent'}}}>
           <Stack.Screen name="index" options={{title: "Divvy Chip", }} />
           <Stack.Screen name="divchip" options={{title: "Buy In", animation:"default"}} />
+          <Stack.Screen name="chiptocash" options={{title: "Chip To Cash", animation:"default"}} />
         </Stack>
 
       </SafeAreaView>

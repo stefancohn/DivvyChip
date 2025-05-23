@@ -1,14 +1,14 @@
 import { View, Text, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useChipContext } from './components/ChipProvider';
-import NumInputBox from './components/inputBox';
+import { useChipContext } from '../components/ChipProvider';
+import NumInputBox from '../components/inputBox';
 import { getDistributionVariants, chipDistribution } from '@/backend/chipDivsionAlgo';
-import ChipDisplay from './components/ChipDisplay';
-import CircleButton from './components/CircleButton';
+import ChipDisplay from '../components/ChipDisplay';
+import CircleButton from '../components/CircleButton';
 import Slider from "@react-native-community/slider";
 import { useState } from 'react';
 import { validBuyIn } from '@/backend/constants';
-import RectangleButton from './components/rectangleButton';
+import RectangleButton from '../components/rectangleButton';
 
 const defDistributions : number[][] = [
     [0.8, 0.2, 0, 0, 0, 0],
@@ -125,7 +125,7 @@ export default function DivChip() {
                 alignSelf: "flex-start",
                 fontFamily: "EncodeSansBold",
                 left: 20,
-                marginBottom: -45,
+                marginBottom: -50,
                 marginTop: 5
             }}>
                 Small Blind: {" "}
@@ -143,8 +143,8 @@ export default function DivChip() {
                     var angle : number = (2*Math.PI)/diffColors;
                     var centerY: number = (wrapperDimensions.height/2) - (chipSize/2);
 
-                    var x : number =(Math.cos((angle*index)+(Math.PI/2)) * getRadius(diffColors-2)) - (chipSize/2);
-                    var y : number = (Math.sin((angle*index)-(Math.PI/2)) * getRadius(diffColors-2)) + (centerY);
+                    var x : number =(Math.cos((angle*index)+((Math.PI)/2)) * getRadius(diffColors-2)) - (chipSize/2);
+                    var y : number = (Math.sin((angle*index)-((Math.PI)/2)) * getRadius(diffColors-2)) + (centerY);
 
                     return (
                         <View key={index} style={{position: "absolute", left:x, top: y, }}>
@@ -196,6 +196,7 @@ export default function DivChip() {
                 <RectangleButton width={100} height={40} fontSize={16} red={false} text="CONFIG/SETTINGS"/>
                 <RectangleButton width={100} height={40} fontSize={16} red={true} text="CHIP-TO-CASH"
                     style={{ marginRight: 10, }}
+                    onPress={()=>router.push('./chiptocash')}
                 />
             </View>
         </View>
