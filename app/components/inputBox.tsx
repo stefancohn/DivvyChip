@@ -9,10 +9,11 @@ type Props = {
     placeholderVal?: any;
     onBlur? : any;
     index? : number;
+    value? : any;
 }
 
 
-export default function NumInputBox({width, height, fontSize, setValue, placeholderVal, onBlur, index} : Props) {
+export default function NumInputBox({width, height, fontSize, setValue, placeholderVal, onBlur, index, value} : Props) {
     const [focused, setFocused] = useState(true);
     const [input, setInput] = useState("");
     
@@ -45,6 +46,7 @@ export default function NumInputBox({width, height, fontSize, setValue, placehol
                         onBlur(input);
                     }
                 }}
+                value={value}
             />
         </View>
     );

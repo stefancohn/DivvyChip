@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 import "./globals.css"
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { fonts } from '../backend/constants';
 import { useFonts } from 'expo-font';
 import { images } from "../backend/constants";
@@ -39,28 +39,32 @@ export default function RootLayout() {
     <SafeAreaProvider>
     <ChipProvider>
       <RadialBackground/>
-
       <SafeAreaView style={{flex:1}} edges={['left', 'right', 'top', 'bottom']}>
 
-        <Image 
-          source={images.premium}
-          resizeMode="stretch"
-          style={{
-            width: 115,
-            height: 40,
-            marginLeft: 25,
-            marginTop:insets.top + 5,
-            position: 'absolute',
-            top: 0,
-            left: 0,
+        <TouchableOpacity style={{
+          marginLeft: 25,
+          marginTop:insets.top + 5,
+          position: 'absolute',
+          top: 0,
+          left: 0,
           }}
-        />
+          onPress={()=>alert("BRUH")}>
+          <Image 
+            source={images.premium}
+            resizeMode="stretch"
+            style={{
+              width: 115,
+              height: 40,
+            }}
+          />
+        </TouchableOpacity>
 
         {/* Stack implcitily holds a View box, by changing contentStyle we can change that implicit box */}
         <Stack screenOptions={{headerShown: false, contentStyle: {backgroundColor: 'transparent'}}}>
-          <Stack.Screen name="index" options={{title: "Divvy Chip", }} />
-          <Stack.Screen name="divchip" options={{title: "Buy In", animation:"default"}} />
-          <Stack.Screen name="chiptocash" options={{title: "Chip To Cash", animation:"default"}} />
+          <Stack.Screen name="index" options={{title: "Divvy Chip", animation:"none"}} />
+          <Stack.Screen name="divchip" options={{title: "Buy In", animation:"none"}} />
+          <Stack.Screen name="chiptocash" options={{title: "Chip To Cash", animation:"none",}} />
+          <Stack.Screen name="config" options={{title: "config", animation:"none",}} />
         </Stack>
 
       </SafeAreaView>

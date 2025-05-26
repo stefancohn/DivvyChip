@@ -193,7 +193,9 @@ export default function DivChip() {
                 <RectangleButton width={100} height={40} fontSize={16} red={true} text="NO BANK PAYOUT"
                     style={{ marginLeft: 10}}
                 />
-                <RectangleButton width={100} height={40} fontSize={16} red={false} text="CONFIG/SETTINGS"/>
+                <RectangleButton width={100} height={40} fontSize={16} red={false} text="CONFIG"
+                    onPress={()=>router.push('./config')}
+                />
                 <RectangleButton width={100} height={40} fontSize={16} red={true} text="CHIP-TO-CASH"
                     style={{ marginRight: 10, }}
                     onPress={()=>router.push('./chiptocash')}

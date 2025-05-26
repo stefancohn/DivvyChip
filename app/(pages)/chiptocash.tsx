@@ -82,7 +82,8 @@ export default function ChipToCash() {
                     return(
                         <View key={i} style={{ flexDirection:"row", gap: 50, alignItems:"center"}}>
                             <ChipDisplay profile={profile} key={i} size={chipSize} showCount={false}/>
-                            <NumInputBox width={100} height={chipSize<4 ? 30 : 20} fontSize={18} index={i} setValue={chipAmountChange}/>
+                            <NumInputBox width={100} height={chipSize<4 ? 30 : 20} 
+                            fontSize={18} index={i} setValue={chipAmountChange} value={amounts[i]!=undefined ? amounts[i].toString(): ""}/>
                         </View>
                     );
                 })}
@@ -102,12 +103,13 @@ export default function ChipToCash() {
                     {getCashOut()} Credits
                 </Text>
 
-                <TouchableOpacity>
+                <TouchableOpacity onPress={()=>setAmount(new Array(diffColors).fill(0))}>
                     <Text style={{
-                        color: "#2DE443",
+                        color: "white",
                         fontSize: 22,
                         fontFamily: "EncodeSansBold",
-                        textDecorationStyle: "solid"
+                        textDecorationLine: "underline",
+                        textAlign: "center"
                     }}>
                         Clear
                     </Text>
@@ -119,7 +121,8 @@ export default function ChipToCash() {
                 <RectangleButton width={100} height={40} fontSize={16} red={true} text="NO BANK PAYOUT"
                     style={{ marginLeft: 10}}
                 />
-                <RectangleButton width={100} height={40} fontSize={16} red={false} text="CONFIG/SETTINGS"/>
+                <RectangleButton width={100} height={40} fontSize={16} red={false} text="CONFIG"
+                    onPress={()=>router.push('./config')}/>
                 <RectangleButton width={100} height={40} fontSize={16} red={true} text="DIVVY CHIP"
                     style={{ marginRight: 10, }}
                     onPress={()=>router.push('./divchip')}
