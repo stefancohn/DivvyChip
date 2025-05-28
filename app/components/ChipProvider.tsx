@@ -25,6 +25,14 @@ type ChipContextType = {
 //create our context
 const ChipContext = createContext<ChipContextType | null>(null);
 
+export const defDistributions : number[][] = [
+    [0.8, 0.2, 0, 0, 0, 0],
+    [0.5, 0.35, 0.15, 0, 0, 0],
+    [0.4, 0.3, 0.2, 0.1, 0, 0],
+    [.4, .25, 0.15,0.12,0.08,0],
+    [0.35, 0.20, 0.18, 0.13, 0.09, 0.05],
+]
+
 //create our provider wrapper which initializes our vals
 export const ChipProvider = ({ children } : {children : React.ReactNode}) => {
     const [buyIn, setBuyIn] = useState('');

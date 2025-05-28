@@ -1,6 +1,6 @@
 import { View, Text, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useChipContext } from '../components/ChipProvider';
+import { defDistributions, useChipContext } from '../components/ChipProvider';
 import NumInputBox from '../components/inputBox';
 import { getDistributionVariants, chipDistribution } from '@/backend/chipDivsionAlgo';
 import ChipDisplay from '../components/ChipDisplay';
@@ -9,14 +9,6 @@ import Slider from "@react-native-community/slider";
 import { useState } from 'react';
 import { validBuyIn } from '@/backend/constants';
 import RectangleButton from '../components/rectangleButton';
-
-const defDistributions : number[][] = [
-    [0.8, 0.2, 0, 0, 0, 0],
-    [0.5, 0.35, 0.15, 0, 0, 0],
-    [0.4, 0.3, 0.2, 0.1, 0, 0],
-    [.4, .25, 0.15,0.12,0.08,0],
-    [0.35, 0.20, 0.18, 0.13, 0.09, 0.05],
-]
 
 //for polar coordinates for chip placements
 //need different radius for diff chip amounts
