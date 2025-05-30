@@ -2,7 +2,6 @@ import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-nati
 import { useRouter } from 'expo-router';
 import { defDistributions, useChipContext } from '../components/ChipProvider';
 import NumInputBox from '../components/inputBox';
-import ChipDisplay from '../components/ChipDisplay';
 import { useEffect, useState } from 'react';
 import RectangleButton from '../components/rectangleButton';
 import CircleButton from '../components/CircleButton';
@@ -204,7 +203,7 @@ export default function Config() {
                             <View style={{width:colWidth}}>
                                 <NumInputBox 
                                     width={"80%"} 
-                                    height={20} 
+                                    height={22} 
                                     fontSize={14}
                                     placeholderVal={String((profile.value*.01).toFixed(2))} 
                                     onBlur={(val: any)=> handleValChange(val, index, "value")}
@@ -249,6 +248,7 @@ export default function Config() {
             <View style={{flexDirection: "row", justifyContent: "space-evenly", width: Dimensions.get('window').width, marginTop: 15}}>
                 <RectangleButton width={100} height={40} fontSize={16} red={true} text="NO BANK PAYOUT"
                     style={{ marginLeft: 10}}
+                    onPress={()=>router.push('./payout')}
                 />
                 <RectangleButton width={100} height={40} fontSize={16} red={true} text="DIVVY CHIP"
                     style={{ marginRight: 10, }}

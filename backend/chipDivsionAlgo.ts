@@ -14,14 +14,6 @@ export interface ChipProfile {
     color: string;
 }
 
-//for when a user selects a screen that displays chips
-//without entering a buy-in 
-function defaultChipProfileInit() : ChipProfile[] {
-    return [
-        { value: 1, amount: 1, distribution: 1, color: "white" },
-    ];
-}
-
 var colors : string[] = ["white", "red", "green", "gray", "blue", "orange"]
 
 //algo to split chips!

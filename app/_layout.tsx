@@ -61,10 +61,13 @@ export default function RootLayout() {
 
         {/* Stack implcitily holds a View box, by changing contentStyle we can change that implicit box */}
         <Stack screenOptions={{headerShown: false, contentStyle: {backgroundColor: 'transparent'}}}>
+          {/* 
           <Stack.Screen name="index" options={{title: "Divvy Chip", animation:"none"}} />
           <Stack.Screen name="divchip" options={{title: "Buy In", animation:"none"}} />
           <Stack.Screen name="chiptocash" options={{title: "Chip To Cash", animation:"none",}} />
           <Stack.Screen name="config" options={{title: "config", animation:"none",}} />
+          <Stack.Screen name="payout" options={{title: "payout", animation:"none",}} />
+          */}
         </Stack>
 
       </SafeAreaView>

@@ -38,7 +38,7 @@ export const ChipProvider = ({ children } : {children : React.ReactNode}) => {
     const [buyIn, setBuyIn] = useState('');
     const [totalCount, setTotalCount] = useState(20);
     const [diffColors, setDiffColors] = useState<number>(2);
-    const [countDistribution, setCountDistribution] = useState([.80, .20,0,0,0,0]);
+    const [countDistribution, setCountDistribution] = useState(defDistributions[0]);
     const [distributionVariants, setDistributionVariants] = useState<number[][]>(getDistributionVariants(countDistribution, diffColors));
     const [chipProfiles, setChipProfiles] = useState<ChipProfile[]>([]);
 

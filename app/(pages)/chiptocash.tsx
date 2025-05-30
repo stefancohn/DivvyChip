@@ -19,7 +19,7 @@ export default function ChipToCash() {
         if (amounts.length != diffColors){
             setAmount(new Array(diffColors).fill(0));
             if (diffColors > 4) {
-                setChipSize(50);
+                setChipSize(45);
             } else {
                 setChipSize(60);
             }
@@ -48,7 +48,7 @@ export default function ChipToCash() {
     
     return (
 
-        <View className="flex-1 items-center gap-5">
+        <View className="items-center gap-5">
 
             {/* Upper Text */}
             <View style={{
@@ -56,18 +56,17 @@ export default function ChipToCash() {
                 gap: 10,
                 alignContent: "center",
                 paddingTop: 65,
-                flex: 1.5
             }}>
                 <Text style={{
                     fontFamily: "EncodeSansBold",
                     textAlign: "center",
                     color: "white",
-                    fontSize: 25,
+                    fontSize: 22,
                 }}>
                     Calculate Cash
                 </Text>
                 <Text style={{
-                    fontSize: 20, 
+                    fontSize: 17, 
                     color: "gray", 
                     fontFamily: "EncodeSans",
                     textAlign: "center",
@@ -77,7 +76,7 @@ export default function ChipToCash() {
             </View>
 
             {/* Chip Display & Inputs */}
-            <View style={{flex: 7, gap: chipSize < 4 ? 20 : 10}}>
+            <View style={{gap: chipSize < 4 ? 20 : 9.75}}>
                 {chipProfiles.map((profile, i) => {
                     return(
                         <View key={i} style={{ flexDirection:"row", gap: 50, alignItems:"center"}}>
@@ -90,7 +89,7 @@ export default function ChipToCash() {
             </View>
 
             {/* Clear and Total Amount */}
-            <View style={{flex: 1}}>
+            <View style={{}}>
                 <Text style={{
                     color: "#2DE443",
                     fontSize: 25,
@@ -120,6 +119,7 @@ export default function ChipToCash() {
             <View style={{flex: 0.8, flexDirection: "row", justifyContent: "space-evenly", width: Dimensions.get('window').width, marginTop: 15}}>
                 <RectangleButton width={100} height={40} fontSize={16} red={true} text="NO BANK PAYOUT"
                     style={{ marginLeft: 10}}
+                    onPress={()=>router.push('./payout')}
                 />
                 <RectangleButton width={100} height={40} fontSize={16} red={false} text="CONFIG"
                     onPress={()=>router.push('./config')}/>

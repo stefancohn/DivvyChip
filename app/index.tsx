@@ -5,6 +5,7 @@ import RectangleButton from "./components/rectangleButton";
 import { getDistributionVariants, chipDistribution } from "../backend/chipDivsionAlgo";
 import { useRouter } from "expo-router";
 import { useChipContext } from "./components/ChipProvider";
+import { useEffect } from "react";
 
 export default function Index() {
   //get router and context vars
@@ -29,10 +30,20 @@ export default function Index() {
       alert('Please enter a valid amount (e.g., 5, 2.50, .99) of 1.00 or above. Only up to two decimal places are allowed.');
     }
   }
+
+  useEffect(()=>{
+    //initialize chipprofiles just in case user goes to config, chip2cash, or no bankpayout
+    setBuyIn("5");
+
+    var distRes = chipDistribution(5, diffColors, totalCount, countDistribution);
+    setChipProfiles(distRes);
+
+    (getDistributionVariants(countDistribution, diffColors));
+  }, [])
  
 
   return (
-    <View className="flex-1">
+    <View className="flex-1" style={{justifyContent: "center", alignItems: "center"}}>
 
       {/* TOP section - Logo display */}
       <View className="items-center mt-[4.2rem]" style={{flex: 5}}>
@@ -53,9 +64,15 @@ export default function Index() {
       </View>
 
       {/* BOTTOM SECTION - go to other section */}
-      <View style={{flex: 1,}}>
-        <RectangleButton width={120} height={70} fontSize={22} red={true} text="CHIP-TO-CASH"
-          style={{alignSelf: "flex-end", marginRight: 10}} onPress={()=>router.push('./chiptocash')}
+      <View style={{flex: 1, flexDirection: "row", alignItems: "stretch"}}>
+        <RectangleButton width={120} height={70} fontSize={22} red={true} text="CHIP TO CASH"
+          style={{ marginRight: 5}} onPress={()=>router.push('./chiptocash')}
+        />
+        <RectangleButton width={120} height={70} fontSize={22} red={false} text="CONFIG"
+          style={{ marginLeft: 5, marginRight: 5}} onPress={()=>router.push('./config')}
+        />
+        <RectangleButton width={120} height={70} fontSize={22} red={true} text="NO BANK PAYOUT"
+          style={{ marginLeft: 5}} onPress={()=>router.push('./payout')}
         />
       </View>
     </View>

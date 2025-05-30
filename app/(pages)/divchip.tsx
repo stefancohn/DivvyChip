@@ -162,9 +162,9 @@ export default function DivChip() {
                     onValueChange={onSliderChange}
                 />
                 {/* Tags under slider */}
-                <View style={{flexDirection: "row", width: Dimensions.get('window').width, justifyContent: "space-between"}}className="mt-[-0.85rem]">
-                    <Text className="font-EncodeSans self-start justify-self-start text-red-600 text-[1rem] ml-12">Less Blind Chips</Text>
-                    <Text className="font-EncodeSans self-end justify-self-end text-green-600 text-[1rem] mr-12">More Blind Chips</Text>
+                <View style={{flexDirection: "row", justifyContent: "space-between"}}className="mt-[-0.85rem]">
+                    <Text className="font-EncodeSans self-start justify-self-start text-red-600 text-[1rem] mr-12">Less Blind Chips</Text>
+                    <Text className="font-EncodeSans self-end justify-self-end text-green-600 text-[1rem] ml-12">More Blind Chips</Text>
                 </View>
 
                 {/* New Buy In */}
@@ -181,15 +181,17 @@ export default function DivChip() {
             </View>
 
             {/* BOTTOM SECTION - go to other section */}
-            <View style={{flexDirection: "row", justifyContent: "space-evenly", width: Dimensions.get('window').width, marginTop: 15}}>
+            <View style={{flexDirection: "row", justifyContent: "space-evenly", marginTop: 15}}>
                 <RectangleButton width={100} height={40} fontSize={16} red={true} text="NO BANK PAYOUT"
-                    style={{ marginLeft: 10}}
+                    style={{ marginRight: 5}}
+                    onPress={()=>router.push('./payout')}
                 />
                 <RectangleButton width={100} height={40} fontSize={16} red={false} text="CONFIG"
+                    style={{marginLeft: 5, marginRight: 5}}
                     onPress={()=>router.push('./config')}
                 />
-                <RectangleButton width={100} height={40} fontSize={16} red={true} text="CHIP-TO-CASH"
-                    style={{ marginRight: 10, }}
+                <RectangleButton width={100} height={40} fontSize={16} red={true} text="CHIP TO CASH"
+                    style={{ marginLeft: 5, }}
                     onPress={()=>router.push('./chiptocash')}
                 />
             </View>
