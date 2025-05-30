@@ -6,23 +6,103 @@ import ChipDisplay from '../components/ChipDisplay';
 import { useEffect, useState } from 'react';
 import RectangleButton from '../components/rectangleButton';
 import CircleButton from '../components/CircleButton';
-import { chipDistribution, getDistributionVariants } from '@/backend/chipDivsionAlgo';
+import { chipDistribution, getDistributionVariants} from '@/backend/chipDivsionAlgo';
+import { colorMap } from '@/backend/constants';
+import ModalSelector from 'react-native-modal-selector'
+
+const colWidth = "22%"
+
+//simple helper to get jsx component for each option 
+function getColorOption(color : string) : React.JSX.Element {
+    return (
+        <View style={{alignItems: "center"}}>
+            <Text style={{
+                color: colorMap[color.toLowerCase() as keyof typeof colorMap],
+                fontSize: 20,
+                fontFamily: "EncodeSans"
+            }}>
+                {color}
+            </Text>
+        </View>
+    );
+}
+
+type ColorOption = {
+    key: number;
+    label: string;
+    component: React.JSX.Element;
+};
+
+const colorData : ColorOption[] = [
+    {key: 0, label: "Black", component: getColorOption("Black")},
+    {key: 1, label: "White", component: getColorOption("White")},
+    {key: 2, label: "Red", component: getColorOption("Red")},
+    {key: 3, label: "Green", component: getColorOption("Green")},
+    {key: 4, label: "Purple", component: getColorOption("Purple")},
+    {key: 5, label: "Yellow", component: getColorOption("Yellow")},
+    {key: 6, label: "Orange", component: getColorOption("Orange")},
+    {key: 7, label: "Pink", component: getColorOption("Pink")},
+    {key: 8, label: "Blue", component: getColorOption("Blue")},
+    {key: 9, label: "Gray", component: getColorOption("Gray")},
+];
 
 export default function Config() {
     const {buyIn : buyIn, setBuyIn, diffColors, setDiffColors, totalCount, setTotalCount,
         countDistribution, setCountDistribution, distributionVariants, setDistributionVariants,
         setChipProfiles, chipProfiles} = useChipContext();
+    
+    var [unselectedColors, setUnseletedColors] = useState<ColorOption[]>(colorData);
 
     const router = useRouter();
 
+    useEffect(() => {
+        //update unselectedColors so colorpciker is well maintained
+        var usedColors = new Set(chipProfiles.map(profile => profile.color.toLowerCase()));
+
+        const available = colorData.filter(option => 
+            !usedColors.has(option.label.toLowerCase())
+        );
+
+        setUnseletedColors(available);
+    }, [chipProfiles])
+
     //function to take inputs from table and properly change value in 
-    //chip profiles
+    //chip profiles. handles verification
     const handleValChange = (value : any, i? : number, 
-    field? : "value" | "amount" | "distribution" | "color") => {
+    field? : "value" | "amount" | "color") => {
         if (i === undefined || field===undefined) return;
 
         if (field ==="value") {
+            const regex : RegExp = /^(?:\d+|\d*\.\d{1,2})$/
+            const regexMatch = regex.test(value);
+            if(!regexMatch) {
+                alert("Value must be a valid decimal or whole number (i.e. 1, 1.32, .21)");
+                return;
+            }
+
+            //set new buy in amount
             value *= 100;
+            var differenceInValue = (value* chipProfiles[i].amount - chipProfiles[i].value * chipProfiles[i].amount);
+            var newBuyIn =(Number(buyIn)*100 + differenceInValue) *.01 
+            setBuyIn(String(Math.round(newBuyIn * 100)/100))
+        } 
+        else if (field === "amount") {
+            const regex : RegExp = /^(?:\d+)$/
+            const regexMatch = regex.test(value);
+            if (!regexMatch) {
+                alert("Count must be a whole number");
+                return;
+            }
+
+            //set new total amount 
+            value = Number(value);
+            var differenceInAmount = value - chipProfiles[i].amount;
+            var newAmount = (totalCount+differenceInAmount);
+            setTotalCount(newAmount);
+            //set new buy in amount
+            var differenceInValue = (value* chipProfiles[i].value - chipProfiles[i].value * chipProfiles[i].amount);
+            var newBuyIn =(Number(buyIn)*100 + differenceInValue) *.01 
+            setBuyIn(String(Math.round(newBuyIn * 100)/100))
         }
 
         const updatedProfiles = [...chipProfiles];
@@ -79,27 +159,21 @@ export default function Config() {
                     gap: 40,
                     margin: 10,
                 }}> 
-                    <View style={{width: "15%"}}>
+                    <View style={{width: colWidth}}>
                         <Text style={styles.tableHeader}>
                             Chip
                         </Text>
                     </View>
 
-                    <View style={{width: "15%"}}>
+                    <View style={{width: colWidth}}>
                         <Text style={styles.tableHeader}>
                             Value
                         </Text>
                     </View>
 
-                    <View style={{width: "15%"}}>
+                    <View style={{width: colWidth}}>
                         <Text style={styles.tableHeader}>
                             Count
-                        </Text>
-                    </View>
-
-                    <View style={{width: "15%"}}>
-                        <Text style={styles.tableHeader}>
-                            %
                         </Text>
                     </View>
                 </View>
@@ -107,49 +181,63 @@ export default function Config() {
                 {/* Each row */}
                 {chipProfiles.map((profile, index) => {
                     return (
-                        <View key={index} style={{ flexDirection: "row", gap:40, margin:10,  }}>
-                            <View style={{width:"15%"}}>
-                                <Text style={{
-                                    fontFamily: "EncodeSans",
-                                    color: profile.color,
-                                    fontSize: 18,
-                                }}>
-                                    {profile.color}<Text style={{color:"gray", margin: 2}}>▼</Text>
-                                </Text>
+                        <View key={index} style={{ flexDirection: "row", gap:40, margin:10, alignItems: "center"}}>
+                            <View style={{width:colWidth}}>
+                                <ModalSelector 
+                                    data={unselectedColors} 
+                                    overlayStyle={{backgroundColor: "transparent"}}
+                                    optionContainerStyle={{backgroundColor: "white"}}
+                                    optionTextStyle={{color: "black"}}
+                                    onChange={(option) => handleValChange(option.label.toLowerCase(), index, "color")}
+                                >
+                                    <Text style={{
+                                        fontFamily: "EncodeSans",
+                                        color: profile.color,
+                                        fontSize: 18,
+                                    }}
+                                    >
+                                        {profile.color+"\n"}<Text style={{color:"gray", margin: 2}}>▼</Text>
+                                    </Text>
+                                </ModalSelector>
                             </View>
 
-                            <View style={{width:"15%"}}>
+                            <View style={{width:colWidth}}>
                                 <NumInputBox 
-                                    width={40} 
+                                    width={"80%"} 
                                     height={20} 
                                     fontSize={14}
                                     placeholderVal={String((profile.value*.01).toFixed(2))} 
-                                    setValue={(val)=> handleValChange(val, index, "value")}
+                                    onBlur={(val: any)=> handleValChange(val, index, "value")}
                                 />
                             </View>
 
-                            <View style={{width:"15%"}}>
+                            <View style={{width:colWidth}}>
                                 <NumInputBox 
-                                    width={40}
-                                    height={20} 
+                                    width={"90%"}
+                                    height={22} 
                                     fontSize={14} 
                                     placeholderVal={String(profile.amount)} 
-                                    setValue={(val)=> handleValChange(val, index, "amount")}
-                                />
-                            </View>
-
-                            <View style={{width:"15%"}}>
-                                <NumInputBox 
-                                    width={40} 
-                                    height={20} 
-                                    fontSize={14} 
-                                    placeholderVal={String(profile.distribution)} 
-                                    setValue={(val)=> handleValChange(val, index, "distribution")}
+                                    onBlur={(val: any)=> handleValChange(val, index, "amount")}
                                 />
                             </View>
                         </View>
                     );
                 })}
+
+                {/* TOTALS ROW AT BOT */}
+                <View style={{ flexDirection: "row", gap:40, margin:10, alignItems: "center"}}>
+                    <View style={{width:colWidth}}>
+                        <Text style={styles.tableHeader}>Totals:</Text>
+                    </View>
+
+                    <View style={{width:colWidth}}>
+                        <Text style={styles.tableHeader}>{buyIn}</Text>
+                    </View>
+
+                    <View style={{width:colWidth}}>
+                        <Text style={styles.tableHeader}>{totalCount}</Text>
+                    </View>
+                </View>
             </View>
 
             {/* Add/Remove chip */}
@@ -166,7 +254,7 @@ export default function Config() {
                     style={{ marginRight: 10, }}
                     onPress={()=>router.push('./divchip')}
                 />
-                <RectangleButton width={100} height={40} fontSize={16} red={true} text="DIVVY CHIP"
+                <RectangleButton width={100} height={40} fontSize={16} red={true} text="Chip to Cash"
                     style={{ marginRight: 10, }}
                     onPress={()=>router.push('./chiptocash')}
                 />

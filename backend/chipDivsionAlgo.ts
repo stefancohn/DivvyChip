@@ -22,7 +22,7 @@ function defaultChipProfileInit() : ChipProfile[] {
     ];
 }
 
-var colors : string[] = ["white", "red", "green", "darkslategray", "blue", "orange"]
+var colors : string[] = ["white", "red", "green", "gray", "blue", "orange"]
 
 //algo to split chips!
 export function chipDistribution(buyIn : number, diffChips: number, totalChips : number, countDistribution : number[]) {

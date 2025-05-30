@@ -17,9 +17,9 @@ export default function NumInputBox({width, height, fontSize, setValue, placehol
     const [focused, setFocused] = useState(true);
     const [input, setInput] = useState("");
     
-    {/* Wrap in this to get inside border */}
     return (
-        <View className="p-[2px] bg-[#FF0000]/70 rounded-[0.625rem]" style={{}}>
+        /* Wrap in this to get inside border */
+        <View className="p-[2px] bg-[#FF0000]/70 rounded-[0.625rem]" style={{alignItems: "center"}}>
             <TextInput
                 className="bg-[#D9D9D9]/90 rounded-[0.625rem] p-0 text-center font-EncodeSans"  
                 style={{

@@ -23,3 +23,21 @@ export function validBuyIn (value:string): boolean {
   
     return false;
 }
+
+//map color name to actual color we want
+export const colorMap = {
+    black: "black",
+    yellow: "#8B8000",
+    red: "red",
+    green: "green",
+    purple: "purple",
+    orange: "orange",
+    white: "black",
+    pink: "pink",
+    blue: "blue",
+    gray: "darkslategray"
+}
+
+export const invertedColorMap = Object.fromEntries(
+    Object.entries(colorMap).map(([key, value]) => [value, key])
+);
