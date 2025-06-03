@@ -6,6 +6,7 @@ import { getDistributionVariants, chipDistribution } from "../backend/chipDivsio
 import { useRouter } from "expo-router";
 import { useChipContext } from "./components/ChipProvider";
 import { useEffect } from "react";
+import Bottom from "./components/BottomRedir";
 
 export default function Index() {
   //get router and context vars
@@ -64,17 +65,7 @@ export default function Index() {
       </View>
 
       {/* BOTTOM SECTION - go to other section */}
-      <View style={{flex: 1, flexDirection: "row", alignItems: "stretch"}}>
-        <RectangleButton width={120} height={70} fontSize={22} red={true} text="CHIP TO CASH"
-          style={{ marginRight: 5}} onPress={()=>router.push('./chiptocash')}
-        />
-        <RectangleButton width={120} height={70} fontSize={22} red={false} text="CONFIG"
-          style={{ marginLeft: 5, marginRight: 5}} onPress={()=>router.push('./config')}
-        />
-        <RectangleButton width={120} height={70} fontSize={22} red={true} text="NO BANK PAYOUT"
-          style={{ marginLeft: 5}} onPress={()=>router.push('./payout')}
-        />
-      </View>
+      <Bottom curField="index" />
     </View>
   );
 }

@@ -8,7 +8,7 @@ import CircleButton from '../components/CircleButton';
 import Slider from "@react-native-community/slider";
 import { useState } from 'react';
 import { validBuyIn } from '@/backend/constants';
-import RectangleButton from '../components/rectangleButton';
+import Bottom from '../components/BottomRedir';
 
 //for polar coordinates for chip placements
 //need different radius for diff chip amounts
@@ -180,21 +180,7 @@ export default function DivChip() {
                 </View>
             </View>
 
-            {/* BOTTOM SECTION - go to other section */}
-            <View style={{flexDirection: "row", justifyContent: "space-evenly", marginTop: 15}}>
-                <RectangleButton width={100} height={40} fontSize={16} red={true} text="NO BANK PAYOUT"
-                    style={{ marginRight: 5}}
-                    onPress={()=>router.push('./payout')}
-                />
-                <RectangleButton width={100} height={40} fontSize={16} red={false} text="CONFIG"
-                    style={{marginLeft: 5, marginRight: 5}}
-                    onPress={()=>router.push('./config')}
-                />
-                <RectangleButton width={100} height={40} fontSize={16} red={true} text="CHIP TO CASH"
-                    style={{ marginLeft: 5, }}
-                    onPress={()=>router.push('./chiptocash')}
-                />
-            </View>
+            <Bottom curField="divchip"/>
         </View>
     );
 }

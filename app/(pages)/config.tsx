@@ -202,7 +202,7 @@ export default function Config() {
 
                             <View style={{width:colWidth}}>
                                 <NumInputBox 
-                                    width={"80%"} 
+                                    width={"90%"} 
                                     height={22} 
                                     fontSize={14}
                                     placeholderVal={String((profile.value*.01).toFixed(2))} 

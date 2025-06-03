@@ -5,6 +5,7 @@ import NumInputBox from '../components/inputBox';
 import ChipDisplay from '../components/ChipDisplay';
 import { useEffect, useState } from 'react';
 import RectangleButton from '../components/rectangleButton';
+import Bottom from '../components/BottomRedir';
 
 export default function ChipToCash() {
     const {diffColors, chipProfiles} = useChipContext();
@@ -115,19 +116,7 @@ export default function ChipToCash() {
                 </TouchableOpacity>
             </View>
 
-            {/* Change page */}
-            <View style={{flex: 0.8, flexDirection: "row", justifyContent: "space-evenly", width: Dimensions.get('window').width, marginTop: 15}}>
-                <RectangleButton width={100} height={40} fontSize={16} red={true} text="NO BANK PAYOUT"
-                    style={{ marginLeft: 10}}
-                    onPress={()=>router.push('./payout')}
-                />
-                <RectangleButton width={100} height={40} fontSize={16} red={false} text="CONFIG"
-                    onPress={()=>router.push('./config')}/>
-                <RectangleButton width={100} height={40} fontSize={16} red={true} text="DIVVY CHIP"
-                    style={{ marginRight: 10, }}
-                    onPress={()=>router.push('./divchip')}
-                />
-            </View>
+            <Bottom curField="chiptocash"/>
         </View>
     );
 }

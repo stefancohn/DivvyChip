@@ -10,10 +10,11 @@ type Props = {
     onBlur? : any;
     index? : number;
     value? : any;
+    isDecimal? : boolean;
 }
 
 
-export default function NumInputBox({width, height, fontSize, setValue, placeholderVal, onBlur, index, value} : Props) {
+export default function NumInputBox({width, height, fontSize, setValue, placeholderVal, onBlur, index, value, isDecimal=true} : Props) {
     const [focused, setFocused] = useState(true);
     const [input, setInput] = useState("");
     
@@ -28,7 +29,7 @@ export default function NumInputBox({width, height, fontSize, setValue, placehol
                     width,
                     height,
                 }}
-                keyboardType="numeric"
+                keyboardType={isDecimal ? ("numeric") : ("default")}
                 returnKeyType="done"
                 onSubmitEditing={Keyboard.dismiss}
                 onChangeText={(text) => {
