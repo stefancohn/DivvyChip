@@ -4,7 +4,6 @@ import { useChipContext } from '../components/ChipProvider';
 import NumInputBox from '../components/inputBox';
 import ChipDisplay from '../components/ChipDisplay';
 import { useEffect, useState } from 'react';
-import RectangleButton from '../components/rectangleButton';
 import Bottom from '../components/BottomRedir';
 
 export default function ChipToCash() {

@@ -1,3 +1,5 @@
+import { PayoutRow, PaymentRow } from "@/app/(pages)/payout";
+
 /*
 5 Dollar Buy in:
 5 * 0.05
@@ -120,4 +122,118 @@ export function getDistributionVariants(distribution : number[], diffColors : nu
     }
 
     return allVariants;
+}
+
+
+//function to calculate how a set of players should 
+//pay each other once they want to cashout 
+export function calculatePayouts(players : PayoutRow[]) : PaymentRow[] {
+    var playersC : PayoutRow[] = [...players];
+
+    //we are going to bruteforce our solution since we only have 10 players max
+    //debt will be represented by positive nums
+    var totalDebt : number = 0;
+    var totalCredit : number = 0;
+
+    //deep coppies
+    //the debtors are the weights
+    //the creditors are the buckets
+    var debtors : PayoutRow[] = new Array<PayoutRow>();
+    var creditors : PayoutRow[] = new Array<PayoutRow>();
+    
+    //first calculate net for each player
+    playersC.forEach((player) => {
+        player.net = player.out - player.in
+
+        if (player.net < 0 && player.isOut) { 
+            player.net*=-1;
+            debtors.push(player);
+            totalDebt+=player.net;
+        } else {
+            creditors.push(player);
+            totalCredit+=player.net;
+        }
+    })
+
+    var payments : PaymentRow[] = new Array<PaymentRow>();
+
+    //not enough credit for debt check
+    if (totalCredit < totalDebt) {
+        payments.push({
+            from: "",
+            to: "",
+            amount: 0,
+            err: "Not enough credit for debt",
+        })
+        return payments;
+    }
+
+
+    //sort creditors, debitors descending
+    creditors.sort((p1, p2) => {return (p2.net! - p1.net!);})
+    debtors.sort((p1, p2) => {return (p2.net! - p1.net!);})
+
+    console.log(creditors);
+    console.log(debtors);
+
+    //start assigning creditors for debtors
+    for (var i = 0; i < debtors.length; i++) {
+
+        //see if we can fit debtor into creditor directly no split
+        if (debtors[i].net! <= creditors[0].net!) {
+            payments.push({
+                from: debtors[i].player,
+                to: creditors[0].player,
+                amount: debtors[i].net!,
+            });
+
+            //subtract debt from credit, remove creditor
+            creditors[0].net! -= debtors[i].net!;
+
+            //if there was a perfect match, remove that creditor
+            if (creditors[0].net! <= 0) {
+                creditors.splice(0, 1); 
+            }
+
+            creditors.sort((p1,p2) => {return (p2.net!-p1.net!)})
+            continue;
+        }
+
+        //else we must split payment among creditors
+        for (var j = 0; j < creditors.length; j++) {
+            var paymentAmt : number = 0;
+            var debtDepleted : boolean = false;
+            var creditDepleted : boolean = false;
+
+            //more debt than credit, need to spill
+            if (debtors[i].net! > creditors[j].net!) {
+                paymentAmt = creditors[j].net!
+                creditDepleted = true;
+            } 
+            //more credit than debt or credit = debt
+            else {
+                paymentAmt = debtors[i].net!;
+                debtDepleted = true;
+            }
+
+            var newPayment : PaymentRow = {
+                from: debtors[i].player,
+                to: creditors[j].player,
+                amount: paymentAmt,
+            };
+            payments.push(newPayment);
+
+            debtors[i].net! -= paymentAmt; 
+
+            if (creditDepleted) {
+                creditors.splice(j, j+1);
+                continue;
+            }
+            if (debtDepleted) break;
+        }
+        //sort afterwards to ensure algorithm still valid
+        creditors.sort((p1,p2) => {return (p2.net!-p1.net!)})
+    }
+
+    return payments;
 }

@@ -45,16 +45,16 @@ export default function Bottom({curField} : BottomProps) {
 
         <RectangleButton width={110} height={40} fontSize={15} red={true} text={routes[0].text}
             style={{ marginRight: 5}}
-            onPress={()=>router.push(routes[0].link)
+            onPress={()=>router.replace(routes[0].link)
             }
         />
         <RectangleButton width={115} height={40} fontSize={15} red={false} text="Config"
-            onPress={()=>router.push('./config')}
+            onPress={()=>router.replace('./config')}
             style={{marginLeft: 5, marginRight: 5}}
         />
         <RectangleButton width={110} height={40} fontSize={15} red={true} text={routes[1].text}
             style={{ marginLeft: 5, }}
-            onPress={()=>router.push(routes[1].link)}
+            onPress={()=>router.replace(routes[1].link)}
         />
 
     </View>);

@@ -1,31 +1,48 @@
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, TextInput, Modal, Pressable } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
-import { defDistributions, useChipContext } from '../components/ChipProvider';
 import NumInputBox from '../components/inputBox';
 import { useEffect, useState } from 'react';
 import RectangleButton from '../components/rectangleButton';
 import CircleButton from '../components/CircleButton';
-import { chipDistribution, getDistributionVariants} from '@/backend/chipDivsionAlgo';
-import { colorMap } from '@/backend/constants';
+import ChipToCashCalc from './chiptocashcalc';
+import { calculatePayouts } from '@/backend/chipDivsionAlgo';
 
 const colWidth = "18%"
 const rowHeight = 22;
 const rowValWidth = "95%"
 
-type PayoutRow = {
+export type PayoutRow = {
     player : string,
     in : number,
     out: number,
     isOut: boolean,
+    net? : number,
+}
+
+export type PaymentRow = {
+    from : string, 
+    to : string, 
+    amount : number,
+    err? : string,
 }
 
 export default function Payout() {
+    const router = useRouter();
+
     const [payoutRows, setPayoutRow] = useState<PayoutRow[]>([
-        {player: "Player 1", in: 0, out: 0, isOut: false}, 
-        {player: "Player 2", in: 0, out: 0, isOut: false}
+        {player: "Player 1", in: 5, out: 10, isOut: false}, 
+        {player: "Player 2", in: 5, out: 0, isOut: false},
+        {player: "Player 3", in: 10, out: 20, isOut: false}, 
+        {player: "Player 4", in: 10, out: 0, isOut: false},
+        {player: "Player 5", in: 20, out: 0, isOut: false},
+        {player: "Player 6", in: 10, out: 20, isOut: false},
+        {player: "Player 7", in: 10, out: 20, isOut: false},
     ]);
 
+    //stateful vars for payout and chip modals
     const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [chipModal, setChipModal] = useState<boolean>(false);
+    const [selectedChipIdx, setSelectedChipIdx] = useState<number>(0);
 
     const handleValueChange = (value : string|number, i:number, field: "player"|"in"|"out") => {
         var newRows = [...payoutRows];
@@ -86,6 +103,17 @@ export default function Payout() {
         newRows[index].isOut = !newRows[index].isOut;
 
         setPayoutRow(newRows);
+    }
+
+    const handleChip2CashPress = function(index:number) {
+        setSelectedChipIdx(index);
+        setChipModal(true);
+    }
+
+    const handlePayout = function() {
+        var payouts : PaymentRow[] = calculatePayouts(payoutRows);
+        
+        console.log(payouts);
     }
 
     return(
@@ -201,7 +229,13 @@ export default function Payout() {
                                     </View>
 
                                     <View style={{flex:1}}>
-                                        <CircleButton height={24} width={24} fontSize={8} text={"chip2cash"}/>
+                                        <CircleButton 
+                                            height={24} 
+                                            width={24} 
+                                            fontSize={8} 
+                                            text={"chip2cash"} 
+                                            onPress={()=> handleChip2CashPress(index)}
+                                        />
                                     </View>
 
                                 </View>
@@ -263,7 +297,7 @@ export default function Payout() {
                 </View>
 
                 {/* GO button, modal appears asking who is out */}
-                <RectangleButton width={150} height={70} fontSize={40} text="GO" style={{}}
+                <RectangleButton width={130} height={50} fontSize={36} text="GO" style={{}}
                     onPress={()=>setModalVisible(true)}
                 />
             </View>
@@ -312,10 +346,10 @@ export default function Payout() {
                                     onPress={() => onPlayerTap(index)}
                                 >
                                     <View style={{
-                                        backgroundColor: (row.isOut ? "#C3D7CB" : "#E5E5E5"),
+                                        backgroundColor: (row.isOut ? "black" : "#E5E5E5"),
                                         borderRadius: 10,
                                     }}>
-                                        <Text style={{fontFamily: "EncodeSans", fontSize: 15, padding: 5}}>
+                                        <Text style={{fontFamily: "EncodeSans", fontSize: 15, padding: 5, color: row.isOut ? "white":"black"}}>
                                             {String(row.player)}
                                         </Text>
                                     </View>
@@ -327,13 +361,13 @@ export default function Payout() {
                             );
                         })}
 
-                        <TouchableOpacity style={{backgroundColor: "#E5E5E5",borderRadius: 10,}} onPress={allOut}>
-                            <Text style={{padding:5, fontSize: 15, fontFamily: "EncodeSans"}}>
+                        <TouchableOpacity style={{backgroundColor: "#C3D7CB",borderRadius: 10,}} onPress={allOut}>
+                            <Text style={{padding:5, fontSize: 15, fontFamily: "EncodeSansBold"}}>
                                 All
                             </Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={()=>console.log("")}>
+                        <TouchableOpacity onPress={()=>handlePayout()}>
                             <Text style={{padding:5, fontSize: 17, fontFamily: "EncodeSansBold", color: "green", textDecorationLine: "underline"}}>
                                 Payout
                             </Text>
@@ -342,6 +376,8 @@ export default function Payout() {
                     </Pressable>
                 </Pressable>
             </Modal>
+
+            <ChipToCashCalc visible={chipModal} setVisible={setChipModal} payoutRow={payoutRows} setPayoutRow={setPayoutRow} index={selectedChipIdx}/>
 
         </View>
     );
