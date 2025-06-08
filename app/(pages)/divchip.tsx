@@ -9,6 +9,7 @@ import Slider from "@react-native-community/slider";
 import { useState } from 'react';
 import { validBuyIn } from '@/backend/constants';
 import Bottom from '../components/BottomRedir';
+import PremiumButton from '../components/PremiumButton';
 
 //for polar coordinates for chip placements
 //need different radius for diff chip amounts
@@ -103,6 +104,9 @@ export default function DivChip() {
 
     //The actual UI is here lol
     return(
+        <>
+        <PremiumButton/>
+
         <View style={{flex: 1, alignItems: 'center', flexDirection:"column"}}>
             {/* TOTAL COUNT */}
             <View className="self-end mr-5 flex-col gap-2 flex-0.5">
@@ -182,5 +186,6 @@ export default function DivChip() {
 
             <Bottom curField="divchip"/>
         </View>
+        </>
     );
 }

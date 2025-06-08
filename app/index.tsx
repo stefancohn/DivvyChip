@@ -1,4 +1,4 @@
-import { View, Image, Text } from "react-native";
+import { View, Image, Text, TouchableOpacity } from "react-native";
 import {images, validBuyIn} from "../backend/constants"
 import NumInputBox from "./components/inputBox";
 import RectangleButton from "./components/rectangleButton";
@@ -7,6 +7,7 @@ import { useRouter } from "expo-router";
 import { useChipContext } from "./components/ChipProvider";
 import { useEffect } from "react";
 import Bottom from "./components/BottomRedir";
+import PremiumButton from "./components/PremiumButton";
 
 export default function Index() {
   //get router and context vars
@@ -44,6 +45,9 @@ export default function Index() {
  
 
   return (
+    <>
+    <PremiumButton/>
+    
     <View className="flex-1" style={{justifyContent: "center", alignItems: "center"}}>
 
       {/* TOP section - Logo display */}
@@ -59,7 +63,7 @@ export default function Index() {
         <Text className="font-EncodeSans text-[1.8rem] text-white/50">Enter Buy-in</Text>
 
         {/* GO button */}
-        <RectangleButton width={150} height={70} fontSize={40} text="GO" style={{paddingTop: 40}}
+        <RectangleButton width={150} height={70} fontSize={40} text="GO" style={{marginTop: 40}}
           onPress={handleGo}
         />
       </View>
@@ -67,5 +71,6 @@ export default function Index() {
       {/* BOTTOM SECTION - go to other section */}
       <Bottom curField="index" />
     </View>
+    </>
   );
 }

@@ -79,7 +79,7 @@ export default function Config() {
                 return;
             }
 
-            //set new buy in amount
+            //set new buy in amount when val gets changed
             value *= 100;
             var differenceInValue = (value* chipProfiles[i].amount - chipProfiles[i].value * chipProfiles[i].amount);
             var newBuyIn =(Number(buyIn)*100 + differenceInValue) *.01 
@@ -246,15 +246,15 @@ export default function Config() {
 
             {/* Bottom Buttons */}
             <View style={{flexDirection: "row", justifyContent: "space-evenly", width: Dimensions.get('window').width, marginTop: 15}}>
-                <RectangleButton width={100} height={40} fontSize={16} red={true} text="NO BANK PAYOUT"
-                    style={{ marginLeft: 10}}
+                <RectangleButton width={120} height={40} fontSize={14} red={true} text="No Bank Payout"
+                    style={{ marginLeft: 10, }}
                     onPress={()=>router.push('./payout')}
                 />
-                <RectangleButton width={100} height={40} fontSize={16} red={true} text="DIVVY CHIP"
-                    style={{ marginRight: 10, }}
+                <RectangleButton width={120} height={40} fontSize={16} red={true} text="Divvy Chip"
+                    style={{ marginRight: 10, marginLeft: 10 }}
                     onPress={()=>router.push('./divchip')}
                 />
-                <RectangleButton width={100} height={40} fontSize={16} red={true} text="Chip to Cash"
+                <RectangleButton width={120} height={40} fontSize={16} red={true} text="Chip to Cash"
                     style={{ marginRight: 10, }}
                     onPress={()=>router.push('./chiptocash')}
                 />

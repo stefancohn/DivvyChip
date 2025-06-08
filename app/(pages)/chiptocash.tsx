@@ -5,6 +5,7 @@ import NumInputBox from '../components/inputBox';
 import ChipDisplay from '../components/ChipDisplay';
 import { useEffect, useState } from 'react';
 import Bottom from '../components/BottomRedir';
+import PremiumButton from '../components/PremiumButton';
 
 export default function ChipToCash() {
     const {diffColors, chipProfiles} = useChipContext();
@@ -47,6 +48,8 @@ export default function ChipToCash() {
     }
     
     return (
+        <>
+        <PremiumButton/>
 
         <View className="items-center gap-5">
 
@@ -66,8 +69,8 @@ export default function ChipToCash() {
                     Calculate Cash
                 </Text>
                 <Text style={{
-                    fontSize: 17, 
-                    color: "gray", 
+                    fontSize: 17,
+                    color: "gray",
                     fontFamily: "EncodeSans",
                     textAlign: "center",
                 }}>
@@ -76,13 +79,13 @@ export default function ChipToCash() {
             </View>
 
             {/* Chip Display & Inputs */}
-            <View style={{gap: chipSize < 4 ? 20 : 9.75}}>
+            <View style={{ gap: chipSize < 4 ? 20 : 9.75 }}>
                 {chipProfiles.map((profile, i) => {
-                    return(
-                        <View key={i} style={{ flexDirection:"row", gap: 50, alignItems:"center"}}>
-                            <ChipDisplay profile={profile} key={i} size={chipSize} showCount={false}/>
-                            <NumInputBox width={100} height={chipSize<4 ? 30 : 20} 
-                            fontSize={18} index={i} setValue={chipAmountChange} value={amounts[i]!=undefined ? amounts[i].toString(): ""}/>
+                    return (
+                        <View key={i} style={{ flexDirection: "row", gap: 50, alignItems: "center" }}>
+                            <ChipDisplay profile={profile} key={i} size={chipSize} showCount={false} />
+                            <NumInputBox width={100} height={chipSize < 4 ? 30 : 20}
+                                fontSize={18} index={i} setValue={chipAmountChange} value={amounts[i] != undefined ? amounts[i].toString() : ""} />
                         </View>
                     );
                 })}
@@ -102,7 +105,7 @@ export default function ChipToCash() {
                     {getCashOut()} Credits
                 </Text>
 
-                <TouchableOpacity onPress={()=>setAmount(new Array(diffColors).fill(0))}>
+                <TouchableOpacity onPress={() => setAmount(new Array(diffColors).fill(0))}>
                     <Text style={{
                         color: "white",
                         fontSize: 22,
@@ -115,7 +118,7 @@ export default function ChipToCash() {
                 </TouchableOpacity>
             </View>
 
-            <Bottom curField="chiptocash"/>
-        </View>
+            <Bottom curField="chiptocash" />
+        </View></>
     );
 }

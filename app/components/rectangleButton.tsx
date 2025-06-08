@@ -21,7 +21,7 @@ function GreenRadialBg({ width, height }: { width: any; height: any }) {
 
 function RedRadialBg({ width, height }: { width: any; height: any }) {
     return (
-      <Svg height={height} width={width} style={StyleSheet.absoluteFillObject}>
+      <Svg height={height} width={width} style={{position: "absolute"}}>
         <Defs>
           <RadialGradient id="grad" cx="50%" cy="50%" r="60%">
             <Stop offset="0" stopColor="#FF0000" stopOpacity="1" />
@@ -55,15 +55,19 @@ export default function RectangleButton({width, height, fontSize, text, style, o
                 alignItems: "center", justifyContent: "center",
                 borderRadius: 10,
                 overflow: "hidden",
+                position: 'relative'
             }}>
 
                 {red ? <RedRadialBg width={width} height={height}/> : <GreenRadialBg width={width} height={height}/>}
 
-                <Text className="color-white text-lg font-EncodeSansBold text-center" style={{
+                <Text style={{
                     fontSize,
                     textAlign: 'center',
-                    lineHeight: fontSize,
-                    flexWrap: "wrap",
+                    textAlignVertical: 'center',
+                    color: "white",
+                    lineHeight: height,
+                    width: width,
+                    fontFamily: "EncodeSansBold"
                 }}>
                     {text}
                 </Text>

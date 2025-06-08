@@ -12,9 +12,6 @@ type TextLink = {
     link : any,
 }
 
-const routeText = ["No Bank Payout", "Chip2Cash", "DivChip"]
-const routeLink = ["./payout", "./chiptocash", "./divchip"]
-
 export default function Bottom({curField} : BottomProps) {
     const router = useRouter();
     var [routes, setRoutes] = useState<TextLink[]>([{text:"",link:"/"},{text:"",link:"/"}]);
@@ -22,7 +19,7 @@ export default function Bottom({curField} : BottomProps) {
     useEffect(() => {
         if (curField == "index" || curField == "divchip") {
             setRoutes([
-                {text: "No Bank\nPayout", link: "./payout"},
+                {text: "No Bank Payout", link: "./payout"},
                 {text: "Chip2Cash", link: "./chiptocash"}
             ]);
         }
@@ -43,16 +40,16 @@ export default function Bottom({curField} : BottomProps) {
     {/* Change page */}
     return (<View style={{flexDirection: "row", justifyContent: "space-evenly", marginTop: 15}}>
 
-        <RectangleButton width={110} height={40} fontSize={15} red={true} text={routes[0].text}
+        <RectangleButton width={110} height={40} fontSize={11} red={true} text={routes[0].text}
             style={{ marginRight: 5}}
             onPress={()=>router.replace(routes[0].link)
             }
         />
-        <RectangleButton width={115} height={40} fontSize={15} red={false} text="Config"
+        <RectangleButton width={115} height={40} fontSize={13} red={false} text="Config"
             onPress={()=>router.replace('./config')}
             style={{marginLeft: 5, marginRight: 5}}
         />
-        <RectangleButton width={110} height={40} fontSize={15} red={true} text={routes[1].text}
+        <RectangleButton width={110} height={40} fontSize={14} red={true} text={routes[1].text}
             style={{ marginLeft: 5, }}
             onPress={()=>router.replace(routes[1].link)}
         />

@@ -129,6 +129,7 @@ export function getDistributionVariants(distribution : number[], diffColors : nu
 //pay each other once they want to cashout 
 export function calculatePayouts(players : PayoutRow[]) : PaymentRow[] {
     var playersC : PayoutRow[] = [...players];
+    var outPlayers : Set<string> = new Set<string>();
 
     //we are going to bruteforce our solution since we only have 10 players max
     //debt will be represented by positive nums
@@ -143,9 +144,11 @@ export function calculatePayouts(players : PayoutRow[]) : PaymentRow[] {
     
     //first calculate net for each player
     playersC.forEach((player) => {
-        player.net = player.out - player.in
+        if (player.isOut) outPlayers.add(player.player);
 
-        if (player.net < 0 && player.isOut) { 
+        player.net = (player.out - player.in);
+
+        if (player.net < 0) { 
             player.net*=-1;
             debtors.push(player);
             totalDebt+=player.net;
@@ -168,13 +171,9 @@ export function calculatePayouts(players : PayoutRow[]) : PaymentRow[] {
         return payments;
     }
 
-
     //sort creditors, debitors descending
     creditors.sort((p1, p2) => {return (p2.net! - p1.net!);})
     debtors.sort((p1, p2) => {return (p2.net! - p1.net!);})
-
-    console.log(creditors);
-    console.log(debtors);
 
     //start assigning creditors for debtors
     for (var i = 0; i < debtors.length; i++) {
@@ -208,11 +207,13 @@ export function calculatePayouts(players : PayoutRow[]) : PaymentRow[] {
             //more debt than credit, need to spill
             if (debtors[i].net! > creditors[j].net!) {
                 paymentAmt = creditors[j].net!
+                creditors[j].net = 0;
                 creditDepleted = true;
             } 
             //more credit than debt or credit = debt
             else {
                 paymentAmt = debtors[i].net!;
+                creditors[j].net = 0;
                 debtDepleted = true;
             }
 
@@ -225,15 +226,15 @@ export function calculatePayouts(players : PayoutRow[]) : PaymentRow[] {
 
             debtors[i].net! -= paymentAmt; 
 
-            if (creditDepleted) {
-                creditors.splice(j, j+1);
-                continue;
-            }
+            if (creditDepleted) {continue;}
             if (debtDepleted) break;
         }
         //sort afterwards to ensure algorithm still valid
         creditors.sort((p1,p2) => {return (p2.net!-p1.net!)})
     }
+
+    //only return payments that hold people that are willing to cash out
+    payments = payments.filter(payment => outPlayers.has(payment.from) || outPlayers.has(payment.to));
 
     return payments;
 }

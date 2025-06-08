@@ -6,6 +6,8 @@ import RectangleButton from '../components/rectangleButton';
 import CircleButton from '../components/CircleButton';
 import ChipToCashCalc from './chiptocashcalc';
 import { calculatePayouts } from '@/backend/chipDivsionAlgo';
+import Bottom from '../components/BottomRedir';
+import PremiumButton from '../components/PremiumButton';
 
 const colWidth = "18%"
 const rowHeight = 22;
@@ -32,19 +34,35 @@ export default function Payout() {
     const [payoutRows, setPayoutRow] = useState<PayoutRow[]>([
         {player: "Player 1", in: 5, out: 10, isOut: false}, 
         {player: "Player 2", in: 5, out: 0, isOut: false},
-        {player: "Player 3", in: 10, out: 20, isOut: false}, 
-        {player: "Player 4", in: 10, out: 0, isOut: false},
-        {player: "Player 5", in: 20, out: 0, isOut: false},
-        {player: "Player 6", in: 10, out: 20, isOut: false},
-        {player: "Player 7", in: 10, out: 20, isOut: false},
     ]);
 
     //stateful vars for payout and chip modals
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [chipModal, setChipModal] = useState<boolean>(false);
     const [selectedChipIdx, setSelectedChipIdx] = useState<number>(0);
+    const [paymentRows, setPaymentRows] = useState<PaymentRow[]>(new Array<PaymentRow>())
 
     const handleValueChange = (value : string|number, i:number, field: "player"|"in"|"out") => {
+        //validation
+        if (field == "in") {
+            if (value==="") return;
+            const regex : RegExp = /^(?:\d+|\d*\.\d{1,2})$/
+            const regexMatch = regex.test(value.toString());
+            if(!regexMatch) {
+                alert("Value must be a valid positive decimal or whole number (i.e. 1, 1.32, .21)");
+                return;
+            }
+        }
+        else if (field == "out") {
+            if (value==="") return;
+            const regex : RegExp = /^-?(?:\d+|\d*\.\d{1,2})$/
+            const regexMatch = regex.test(value.toString());
+            if(!regexMatch) {
+                alert("Value must be a valid decimal or whole number (i.e. 1, 1.32, .21)");
+                return;
+            }
+        }
+
         var newRows = [...payoutRows];
         newRows[i]= {
             ...newRows[i],
@@ -110,13 +128,26 @@ export default function Payout() {
         setChipModal(true);
     }
 
+    //once payout gets pressed, calculate the payout rows
     const handlePayout = function() {
-        var payouts : PaymentRow[] = calculatePayouts(payoutRows);
-        
-        console.log(payouts);
+        var oneOut : boolean = false;
+        payoutRows.forEach(row => {
+            if (row.isOut) {
+                oneOut = true;
+                return;
+            }
+        });
+
+        if (oneOut) {
+            setModalVisible(false);
+            setPaymentRows(calculatePayouts(payoutRows));
+        }
     }
 
     return(
+        <>
+        <PremiumButton/>
+        
         <View style={{alignItems: "center",}}>
             {/* Upper Text */}
             <View style={{
@@ -361,14 +392,14 @@ export default function Payout() {
                             );
                         })}
 
-                        <TouchableOpacity style={{backgroundColor: "#C3D7CB",borderRadius: 10,}} onPress={allOut}>
+                        <TouchableOpacity style={{backgroundColor: "white",borderRadius: 10,}} onPress={allOut}>
                             <Text style={{padding:5, fontSize: 15, fontFamily: "EncodeSansBold"}}>
                                 All
                             </Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity onPress={()=>handlePayout()}>
-                            <Text style={{padding:5, fontSize: 17, fontFamily: "EncodeSansBold", color: "green", textDecorationLine: "underline"}}>
+                            <Text style={{padding:5, fontSize: 25, fontFamily: "EncodeSansBold", color: "green", textDecorationLine: "underline"}}>
                                 Payout
                             </Text>
                         </TouchableOpacity>
@@ -379,7 +410,11 @@ export default function Payout() {
 
             <ChipToCashCalc visible={chipModal} setVisible={setChipModal} payoutRow={payoutRows} setPayoutRow={setPayoutRow} index={selectedChipIdx}/>
 
+            <View style={{marginTop:25}}>
+                <Bottom curField='payout'/>
+            </View>
         </View>
+        </>
     );
 }
 

@@ -5,10 +5,12 @@ import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { fonts } from '../backend/constants';
 import { useFonts } from 'expo-font';
-import { images } from "../backend/constants";
-import { Image } from "react-native";
 import { ChipProvider } from './components/ChipProvider';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from "react";
+
+SplashScreen.preventAutoHideAsync();
 
 function RadialBackground() {
   return (
@@ -33,6 +35,12 @@ export default function RootLayout() {
     EncodeSansBold: fonts.encodeSansBold,
   });
 
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
   const insets = useSafeAreaInsets();
   
   return (
@@ -41,26 +49,13 @@ export default function RootLayout() {
       <RadialBackground/>
       <SafeAreaView style={{flex:1}} edges={['left', 'right', 'top', 'bottom']}>
 
-        <TouchableOpacity style={{
-          marginLeft: 25,
-          marginTop:insets.top + 5,
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          }}
-          onPress={()=>alert("BRUH")}>
-          <Image 
-            source={images.premium}
-            resizeMode="stretch"
-            style={{
-              width: 115,
-              height: 40,
-            }}
-          />
-        </TouchableOpacity>
-
         {/* Stack implcitily holds a View box, by changing contentStyle we can change that implicit box */}
-        <Stack screenOptions={{headerShown: false, contentStyle: {backgroundColor: 'transparent'}}}>
+        <Stack screenOptions={{
+          headerShown: false, 
+          contentStyle: {backgroundColor: 'transparent'},
+          animation: 'none'
+          
+        }}>
           {/* 
           <Stack.Screen name="index" options={{title: "Divvy Chip", animation:"none"}} />
           <Stack.Screen name="divchip" options={{title: "Buy In", animation:"none"}} />
