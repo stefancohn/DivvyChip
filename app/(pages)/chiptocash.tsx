@@ -1,4 +1,4 @@
-import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useChipContext } from '../components/ChipProvider';
 import NumInputBox from '../components/inputBox';
@@ -6,6 +6,7 @@ import ChipDisplay from '../components/ChipDisplay';
 import { useEffect, useState } from 'react';
 import Bottom from '../components/BottomRedir';
 import PremiumButton from '../components/PremiumButton';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 export default function ChipToCash() {
     const {diffColors, chipProfiles} = useChipContext();
@@ -51,7 +52,11 @@ export default function ChipToCash() {
         <>
         <PremiumButton/>
 
-        <View className="items-center gap-5">
+        <Animated.View className="items-center gap-5"
+            entering={FadeIn.duration(500)}
+            exiting={FadeIn.duration(500)}
+            layout={FadeIn.duration(500)}
+        >
 
             {/* Upper Text */}
             <View style={{
@@ -119,6 +124,7 @@ export default function ChipToCash() {
             </View>
 
             <Bottom curField="chiptocash" />
-        </View></>
+        </Animated.View>
+        </>
     );
 }

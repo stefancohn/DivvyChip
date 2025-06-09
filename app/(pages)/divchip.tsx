@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { validBuyIn } from '@/backend/constants';
 import Bottom from '../components/BottomRedir';
 import PremiumButton from '../components/PremiumButton';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 //for polar coordinates for chip placements
 //need different radius for diff chip amounts
@@ -107,7 +108,12 @@ export default function DivChip() {
         <>
         <PremiumButton/>
 
-        <View style={{flex: 1, alignItems: 'center', flexDirection:"column"}}>
+        <Animated.View 
+            style={{flex: 1, alignItems: 'center', flexDirection:"column"}}
+            entering={FadeIn.duration(500)}
+            exiting={FadeIn.duration(500).springify()}
+            layout={FadeIn.duration(500)}
+        >
             {/* TOTAL COUNT */}
             <View className="self-end mr-5 flex-col gap-2 flex-0.5">
                 <Text className="font-EncodeSansBold color-white">Total Count:</Text>
@@ -185,7 +191,7 @@ export default function DivChip() {
             </View>
 
             <Bottom curField="divchip"/>
-        </View>
+        </Animated.View>
         </>
     );
 }

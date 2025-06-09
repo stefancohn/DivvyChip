@@ -5,7 +5,6 @@ import ChipDisplay from '../components/ChipDisplay';
 import { useEffect, useState } from 'react';
 import { PayoutRow } from './payout';
 import RectangleButton from '../components/rectangleButton';
-import { calculatePayouts } from '@/backend/chipDivsionAlgo';
 
 type Props = {
     visible : boolean,

@@ -8,6 +8,8 @@ import CircleButton from '../components/CircleButton';
 import { chipDistribution, getDistributionVariants} from '@/backend/chipDivsionAlgo';
 import { colorMap } from '@/backend/constants';
 import ModalSelector from 'react-native-modal-selector'
+import Animated, { FadeIn } from 'react-native-reanimated';
+import PremiumButton from '../components/PremiumButton';
 
 const colWidth = "22%"
 
@@ -132,7 +134,15 @@ export default function Config() {
     }
     
     return (
-        <View className="flex-1 items-center gap-5 pt-[6.25rem]">
+        <>
+        <PremiumButton/>
+
+        <Animated.View 
+            className="flex-1 items-center gap-5 pt-[6.25rem]"
+            entering={FadeIn.duration(500)}
+            exiting={FadeIn.duration(500)}
+            layout={FadeIn.springify()}
+        >
             {/* Upper Text */}
             <View>
                 <Text style={{
@@ -246,20 +256,21 @@ export default function Config() {
 
             {/* Bottom Buttons */}
             <View style={{flexDirection: "row", justifyContent: "space-evenly", width: Dimensions.get('window').width, marginTop: 15}}>
-                <RectangleButton width={120} height={40} fontSize={14} red={true} text="No Bank Payout"
+                <RectangleButton width={110} height={50} fontSize={12} red={true} text="No Bank Payout"
                     style={{ marginLeft: 10, }}
                     onPress={()=>router.push('./payout')}
                 />
-                <RectangleButton width={120} height={40} fontSize={16} red={true} text="Divvy Chip"
+                <RectangleButton width={110} height={50} fontSize={16} red={true} text="Divvy Chip"
                     style={{ marginRight: 10, marginLeft: 10 }}
                     onPress={()=>router.push('./divchip')}
                 />
-                <RectangleButton width={120} height={40} fontSize={16} red={true} text="Chip to Cash"
+                <RectangleButton width={110} height={50} fontSize={16} red={true} text="Chip to Cash"
                     style={{ marginRight: 10, }}
                     onPress={()=>router.push('./chiptocash')}
                 />
             </View>
-        </View>
+        </Animated.View>
+        </>
     )
 }
 
