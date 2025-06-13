@@ -1,14 +1,13 @@
 import { View, Text, StyleSheet, TouchableOpacity, Modal, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
 import NumInputBox from '../components/inputBox';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import RectangleButton from '../components/rectangleButton';
 import CircleButton from '../components/CircleButton';
 import ChipToCashCalc from './chiptocashcalc';
 import { calculatePayouts } from '@/backend/chipDivsionAlgo';
 import Bottom from '../components/BottomRedir';
 import PremiumButton from '../components/PremiumButton';
-import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 const colWidth = "18%"
 const rowHeight = 22;

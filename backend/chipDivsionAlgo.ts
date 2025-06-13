@@ -20,14 +20,32 @@ var colors : string[] = ["white", "red", "green", "gray", "blue", "orange"]
 
 //algo to split chips!
 export function chipDistribution(buyIn : number, diffChips: number, totalChips : number, countDistribution : number[]) {
+    function calculateSmallBlind() : number{
+        if (diffChips <= 3) {
+            return (buyIn * .05);
+        } else if (diffChips <= 5) {
+            return (buyIn*.025);
+        }
+        return (buyIn*0.01)
+    }; 
+
+    function calculateProgressionFactor() : number[] {
+        if (diffChips <= 2) {
+            return [1, 4];
+        } else if (diffChips <=3) {
+            return [1, 2, 2];
+        }
+        return [1,2,2,1.5, 1.5];
+    }
+
     //convert to cents
     buyIn*=100;
 
     //get blind for starting chip
-    var smallBlind = buyIn * .01;
+    var smallBlind = calculateSmallBlind();
 
     //TODO: code different progression factors
-    var progressionFactor = [2,2,1.5, 1.5];
+    var progressionFactor = calculateProgressionFactor();
 
     //high percentage:low val -> low percentage: high val
     var chipProfiles: ChipProfile[] = new Array(diffChips);
@@ -43,6 +61,7 @@ export function chipDistribution(buyIn : number, diffChips: number, totalChips :
     currentCentsLeft -= (chipProfiles[0].amount*chipProfiles[0].value);
     
     //initialize each chip profile, assigning it its distribution, amount, and val
+    //based on preset
     for (var i =1; i < chipProfiles.length; i++) {
         var chipsToUse : number = totalChips * countDistribution[i];
 
@@ -50,12 +69,15 @@ export function chipDistribution(buyIn : number, diffChips: number, totalChips :
         //get amount of cents that chips has to fill, i.e. 
         //if a chip should be 15% of the chips, it should fill 
         //15% of the total buyin amount
-        if (i!=chipProfiles.length-1) {
-            currentVal*=progressionFactor[i-1];
+        //if (i!=chipProfiles.length-1) {
+            currentVal*=progressionFactor[i];
             currentCentsLeft-=(chipsToUse*currentVal);
-        } else {
+        //} 
+        /*
+        else {
             currentVal = currentCentsLeft/chipsToUse;
         }
+        */
 
         //floor 
         currentVal = Math.floor(currentVal);
