@@ -1,4 +1,5 @@
 import { PayoutRow, PaymentRow } from "@/app/(pages)/payout";
+import {positiveValueFill, valueChange} from './solver'
 
 /*
 5 Dollar Buy in:
@@ -26,7 +27,7 @@ export function chipDistribution(buyIn : number, diffChips: number, totalChips :
         } else if (diffChips <= 5) {
             return (buyIn*.025);
         }
-        return (buyIn*0.01)
+        return (buyIn*0.025)
     }; 
 
     function calculateProgressionFactor() : number[] {
@@ -35,7 +36,48 @@ export function chipDistribution(buyIn : number, diffChips: number, totalChips :
         } else if (diffChips <=3) {
             return [1, 2, 2];
         }
-        return [1,2,2,1.5, 1.5];
+        else {
+            return [1,2,2,1.5, 1.5, 1.5];
+        } 
+    }
+
+    //when our preset does not land us what we need
+    function amountFill() : Boolean {
+        var coeffs : number[] = chipProfiles.map(prof => prof.value);
+        var addChips = currentTotal < buyIn;
+
+        var result;
+
+        //we need more chips
+        if (addChips) {
+            var target : number = buyIn-currentTotal; 
+
+            result= positiveValueFill(target, coeffs);
+        } 
+        //we need to remove some chips
+        else {
+            var target : number = (buyIn-currentTotal)*-1;
+
+            result = positiveValueFill(target, coeffs);
+        }
+
+        //update chipprofiles
+        if (result) {
+            for (const key in result) {
+                var idx = key.slice(1, key.length);
+                var numericIdx = Number(idx);
+                
+                if (addChips) {
+                    chipProfiles[numericIdx].amount += result[key];
+                } else {
+                    chipProfiles[numericIdx].amount -= result[key];
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     //convert to cents
@@ -55,11 +97,13 @@ export function chipDistribution(buyIn : number, diffChips: number, totalChips :
     var currentCentsLeft : number= buyIn;
 
     //hard code first value as the small blind!
-    chipProfiles[0] = {value: currentVal, amount: Math.floor(totalChips*countDistribution[0]), 
+    chipProfiles[0] = {value: Math.floor(currentVal), amount: Math.floor(totalChips*countDistribution[0]), 
         distribution: countDistribution[0], color: colors[0]}
 
     currentCentsLeft -= (chipProfiles[0].amount*chipProfiles[0].value);
     
+    var currentTotal = chipProfiles[0].value*chipProfiles[0].amount;
+    var currentAmount = chipProfiles[0].amount;
     //initialize each chip profile, assigning it its distribution, amount, and val
     //based on preset
     for (var i =1; i < chipProfiles.length; i++) {
@@ -70,14 +114,9 @@ export function chipDistribution(buyIn : number, diffChips: number, totalChips :
         //if a chip should be 15% of the chips, it should fill 
         //15% of the total buyin amount
         //if (i!=chipProfiles.length-1) {
-            currentVal*=progressionFactor[i];
-            currentCentsLeft-=(chipsToUse*currentVal);
-        //} 
-        /*
-        else {
-            currentVal = currentCentsLeft/chipsToUse;
-        }
-        */
+        currentVal*=progressionFactor[i];
+        currentVal = Math.round(currentVal*100)/100
+        currentCentsLeft-=(chipsToUse*currentVal);
 
         //floor 
         currentVal = Math.floor(currentVal);
@@ -89,6 +128,41 @@ export function chipDistribution(buyIn : number, diffChips: number, totalChips :
             distribution: countDistribution[i],
             color: colors[i],
         };
+
+        currentTotal += currentVal * chipsToUse;
+        currentAmount += chipsToUse;
+    }
+
+    //once preset is done we are going to fix
+    //if currenttotal and buyin not synced
+    var couldFill : Boolean = true;
+    if (currentTotal != buyIn) {
+        couldFill = amountFill();
+    }
+
+    //if we could not fill 
+    //run algorithm to see if we can change cent values
+    if (!couldFill) {
+        if (currentAmount != totalChips) {
+            var amountError = totalChips - currentAmount;
+            chipProfiles[0].amount+=amountError;
+        }
+
+        var nums : number[] = chipProfiles.map((val)=>val.amount);
+        var coeffs : number[] = chipProfiles.map((val)=>val.value);
+        var valChange = valueChange(nums, coeffs, buyIn);
+        console.log(valChange);
+
+        if (valChange) {
+            for (const key in valChange) {
+                var idx = key.slice(1, key.length);
+                var numericIdx = Number(idx);
+                
+                chipProfiles[numericIdx].value = valChange[key];
+            }
+        } else {
+            chipProfiles[0].color = "null";
+        }
     }
 
     return chipProfiles;

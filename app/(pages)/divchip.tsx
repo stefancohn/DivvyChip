@@ -40,9 +40,9 @@ export default function DivChip() {
 
     //when chip button gets pressed, properly change diff chip amt
     //and recalculate distribution
-    const changeDiffColor = () => {
-        //ensure next val is between 2-6
-        let next = (diffColors + 1)%7;
+    const changeDiffColor = async () => {
+        //ensure next val is between 2-5
+        let next = (diffColors + 1)%6;
         if (next==0) next+=2;
         setDiffColors(next);
 
@@ -57,14 +57,14 @@ export default function DivChip() {
 
     //when user changes top right value, properly handle 
     //and recalculate distribution
-    const verifyNewTotalCount = (value : any) => {
+    const verifyNewTotalCount = async (value : any) => {
         if (value === "") {return}
         
         value = Number(value);
         //min of 10 chips 
         if(value>=10 && Number.isInteger(value)){
             setTotalCount(value);
-            var distRes = chipDistribution(Number(buyIn), diffColors, value, countDistribution);
+            var distRes = await chipDistribution(Number(buyIn), diffColors, value, countDistribution);
             setChipProfiles(distRes);
         } else {
             alert("Total count must be greater than 10 and a whole number.");
@@ -73,8 +73,8 @@ export default function DivChip() {
 
     //convert the slider value to appropriate
     //change in distributions
-    const onSliderChange = (value: any) => {
-        const distRes = chipDistribution(Number(buyIn), diffColors, totalCount, distributionVariants[value]);
+    const onSliderChange = async (value: any) => {
+        const distRes = await chipDistribution(Number(buyIn), diffColors, totalCount, distributionVariants[value]);
         setChipProfiles(distRes);
     }
 
@@ -91,12 +91,12 @@ export default function DivChip() {
         }
     }
 
-    const newBuyIn = (value : any) => {
+    const newBuyIn = async (value : any) => {
         if (value === "") {return}
 
         if (validBuyIn(value)) {
             setBuyIn(value);
-            var distRes = chipDistribution(value, diffColors, totalCount, countDistribution);
+            var distRes = await chipDistribution(value, diffColors, totalCount, countDistribution);
             setChipProfiles(distRes);
         } else {
             alert('Please enter a valid amount (e.g., 5, 2.50, .99) of 1.00 or above. Only up to two decimal places are allowed.');

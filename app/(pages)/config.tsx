@@ -120,7 +120,7 @@ export default function Config() {
     //and recalculate distribution
     const changeDiffColor = () => {
         //ensure next val is between 2-6
-        let next = (diffColors + 1)%7;
+        let next = (diffColors + 1)%6;
         if (next==0) next+=2;
         setDiffColors(next);
 
