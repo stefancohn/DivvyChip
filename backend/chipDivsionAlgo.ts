@@ -1,15 +1,6 @@
 import { PayoutRow, PaymentRow } from "@/app/(pages)/payout";
 import {positiveValueFill, valueChange} from './solver'
 
-/*
-5 Dollar Buy in:
-5 * 0.05
-5 * 0.1
-7 * 0.25
-5 * 0.50
-
-5c 10c blinds
-*/
 export interface ChipProfile {
     value: number;
     amount: number;
@@ -20,7 +11,8 @@ export interface ChipProfile {
 var colors : string[] = ["white", "red", "green", "gray", "blue", "orange"]
 
 //algo to split chips!
-export function chipDistribution(buyIn : number, diffChips: number, totalChips : number, countDistribution : number[]) {
+export function chipDistribution(buyIn : number, diffChips: number, totalChips : number, 
+countDistribution : number[],):ChipProfile[]{
     function calculateSmallBlind() : number{
         if (diffChips <= 3) {
             return (buyIn * .05);
@@ -109,11 +101,6 @@ export function chipDistribution(buyIn : number, diffChips: number, totalChips :
     for (var i =1; i < chipProfiles.length; i++) {
         var chipsToUse : number = totalChips * countDistribution[i];
 
-        //calculate value of chip necessary to fill in its distribution
-        //get amount of cents that chips has to fill, i.e. 
-        //if a chip should be 15% of the chips, it should fill 
-        //15% of the total buyin amount
-        //if (i!=chipProfiles.length-1) {
         currentVal*=progressionFactor[i];
         currentVal = Math.round(currentVal*100)/100
         currentCentsLeft-=(chipsToUse*currentVal);
@@ -166,6 +153,44 @@ export function chipDistribution(buyIn : number, diffChips: number, totalChips :
     }
 
     return chipProfiles;
+}
+
+const defCountDistributions : number[][][] = [
+    [
+        [0.85, 0.15, 0, 0, 0, 0],
+        [0.80, 0.20, 0, 0, 0, 0],
+        [0.75, 0.15, 0, 0, 0, 0],
+    ],
+    [
+        [0.55, 0.35, 0.1, 0, 0, 0],
+        [0.6, 0.3, 0.1, 0, 0, 0],
+        [0.5, 0.35, 0.15, 0, 0, 0],
+        [0.65, 0.25, 0.1, 0, 0, 0],
+    ],
+    [
+        [0.40, 0.30, 0.20, 0.10, 0, 0],
+        [0.35, 0.35, 0.2, 0.1, 0, 0],
+        [0.30, 0.30, 0.25, 0.15, 0, 0],
+    ],
+    [
+        [.4, .25, 0.15,0.12,0.08,0],
+        [0.30, 0.25, 0.20, 0.15, 0.10, 0],
+        [0.45, 0.25, 0.15, 0.10, 0.05, 0],
+        [0.25, 0.20, 0.20, 0.20, 0.15, 0],
+        [0.38, 0.22, 0.20, 0.12, 0.08, 0]
+    ],
+]
+
+//going to try 3-5 different count distributions with 2-3 different progression factors 
+//begin building solution - look for one that fits buyin and totalchips the best
+//if no solution found find closest to the desired buyin and chiptotal and sanity check it
+export function calculateChipProfiles(buyIn : number, diffChips: number, totalChips : number,) {
+    const countDistrbutions = defCountDistributions[diffChips-2];
+
+    //iterate over distributions
+    for (var i = 0; i < countDistrbutions.length; i++) {
+
+    }
 }
 
 //returns all different variations of distribution

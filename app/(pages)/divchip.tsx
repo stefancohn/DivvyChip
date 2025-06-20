@@ -51,7 +51,7 @@ export default function DivChip() {
         setDistributionVariants(getDistributionVariants(defDistributions[next-2],next));
 
         //update chip profiles
-        var distRes = chipDistribution(Number(buyIn), next, totalCount, defDistributions[next-2]);
+        var distRes = chipDistribution(Number(buyIn), next, totalCount, defDistributions[next-2],);
         setChipProfiles(distRes);
     } 
 
@@ -64,7 +64,7 @@ export default function DivChip() {
         //min of 10 chips 
         if(value>=10 && Number.isInteger(value)){
             setTotalCount(value);
-            var distRes = await chipDistribution(Number(buyIn), diffColors, value, countDistribution);
+            var distRes = await chipDistribution(Number(buyIn), diffColors, value, countDistribution,);
             setChipProfiles(distRes);
         } else {
             alert("Total count must be greater than 10 and a whole number.");
@@ -74,7 +74,7 @@ export default function DivChip() {
     //convert the slider value to appropriate
     //change in distributions
     const onSliderChange = async (value: any) => {
-        const distRes = await chipDistribution(Number(buyIn), diffColors, totalCount, distributionVariants[value]);
+        const distRes = chipDistribution(Number(buyIn), diffColors, totalCount, distributionVariants[value]);
         setChipProfiles(distRes);
     }
 
@@ -96,11 +96,17 @@ export default function DivChip() {
 
         if (validBuyIn(value)) {
             setBuyIn(value);
-            var distRes = await chipDistribution(value, diffColors, totalCount, countDistribution);
+            var distRes = chipDistribution(value, diffColors, totalCount, countDistribution);
             setChipProfiles(distRes);
         } else {
             alert('Please enter a valid amount (e.g., 5, 2.50, .99) of 1.00 or above. Only up to two decimal places are allowed.');
         }
+    }
+
+    function getTotalCount() {
+        var total=0;
+        chipProfiles.forEach(prof=>total+=prof.amount);
+        return total;
     }
 
     //The actual UI is here lol
@@ -117,7 +123,7 @@ export default function DivChip() {
             {/* TOTAL COUNT */}
             <View className="self-end mr-5 flex-col gap-2 flex-0.5">
                 <Text className="font-EncodeSansBold color-white">Total Count:</Text>
-                <NumInputBox width="100%" height={25} fontSize={20} onBlur={verifyNewTotalCount} placeholderVal={String(totalCount)}/>
+                <NumInputBox width="100%" height={25} fontSize={20} onBlur={verifyNewTotalCount} placeholderVal={String(getTotalCount())}/>
             </View>
 
             {/* Recommended Blinds */}

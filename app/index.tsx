@@ -13,13 +13,13 @@ export default function Index() {
   //get router and context vars
   const router = useRouter();
   const {buyIn : buyIn, setBuyIn, diffColors, totalCount, 
-    countDistribution, setChipProfiles} = useChipContext();
+    countDistribution, setChipProfiles,} = useChipContext();
 
   //func for when go gets pressed
   const handleGo = () => {
     //validify
     if (validBuyIn(buyIn)) {
-      var distRes = chipDistribution(Number(buyIn), diffColors, totalCount, countDistribution);
+      var distRes = chipDistribution(Number(buyIn), diffColors, totalCount, countDistribution,);
       setChipProfiles(distRes);
 
       (getDistributionVariants(countDistribution, diffColors));
@@ -37,7 +37,7 @@ export default function Index() {
     //initialize chipprofiles just in case user goes to config, chip2cash, or no bankpayout
     setBuyIn("5");
 
-    var distRes = chipDistribution(5, diffColors, totalCount, countDistribution);
+    var distRes = chipDistribution(5, diffColors, totalCount, countDistribution,);
     setChipProfiles(distRes);
 
     (getDistributionVariants(countDistribution, diffColors));
