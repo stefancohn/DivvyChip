@@ -2,7 +2,7 @@ import { View, Text, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { defDistributions, useChipContext } from '../components/ChipProvider';
 import NumInputBox from '../components/inputBox';
-import { getDistributionVariants, chipDistribution } from '@/backend/chipDivsionAlgo';
+import { getDistributionVariants, chipDistribution, calculateChipProfiles } from '@/backend/chipDivsionAlgo';
 import ChipDisplay from '../components/ChipDisplay';
 import CircleButton from '../components/CircleButton';
 import Slider from "@react-native-community/slider";
@@ -51,7 +51,7 @@ export default function DivChip() {
         setDistributionVariants(getDistributionVariants(defDistributions[next-2],next));
 
         //update chip profiles
-        var distRes = chipDistribution(Number(buyIn), next, totalCount, defDistributions[next-2],);
+        var distRes = calculateChipProfiles(Number(buyIn), next, totalCount,);
         setChipProfiles(distRes);
     } 
 
@@ -64,7 +64,7 @@ export default function DivChip() {
         //min of 10 chips 
         if(value>=10 && Number.isInteger(value)){
             setTotalCount(value);
-            var distRes = await chipDistribution(Number(buyIn), diffColors, value, countDistribution,);
+            var distRes = calculateChipProfiles(Number(buyIn), diffColors, value,);
             setChipProfiles(distRes);
         } else {
             alert("Total count must be greater than 10 and a whole number.");
@@ -96,7 +96,7 @@ export default function DivChip() {
 
         if (validBuyIn(value)) {
             setBuyIn(value);
-            var distRes = chipDistribution(value, diffColors, totalCount, countDistribution);
+            var distRes = calculateChipProfiles(value, diffColors, totalCount,);
             setChipProfiles(distRes);
         } else {
             alert('Please enter a valid amount (e.g., 5, 2.50, .99) of 1.00 or above. Only up to two decimal places are allowed.');
@@ -107,6 +107,12 @@ export default function DivChip() {
         var total=0;
         chipProfiles.forEach(prof=>total+=prof.amount);
         return total;
+    }
+
+    function getTotalBuyIn() {
+        var total=0;
+        chipProfiles.forEach(prof=>total+=(prof.value*prof.amount));
+        return total/100;
     }
 
     //The actual UI is here lol
@@ -189,7 +195,7 @@ export default function DivChip() {
                         width={120} 
                         height={50} 
                         fontSize={20} 
-                        placeholderVal={String(buyIn)}
+                        placeholderVal={String(getTotalBuyIn())}
                         onBlur={newBuyIn}
                     />
                     <Text style={{fontFamily: "EncodeSansBold", fontSize: 15, color: "gray", textAlign: "center"}}>New Buy-In</Text>

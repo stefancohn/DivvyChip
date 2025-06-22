@@ -5,7 +5,7 @@ import NumInputBox from '../components/inputBox';
 import { useEffect, useState } from 'react';
 import RectangleButton from '../components/rectangleButton';
 import CircleButton from '../components/CircleButton';
-import { chipDistribution, getDistributionVariants} from '@/backend/chipDivsionAlgo';
+import { calculateChipProfiles, getDistributionVariants} from '@/backend/chipDivsionAlgo';
 import { colorMap } from '@/backend/constants';
 import ModalSelector from 'react-native-modal-selector'
 import Animated, { FadeIn } from 'react-native-reanimated';
@@ -129,7 +129,7 @@ export default function Config() {
         setDistributionVariants(getDistributionVariants(defDistributions[next-2],next));
 
         //update chip profiles
-        var distRes = chipDistribution(Number(buyIn), next, totalCount, defDistributions[next-2]);
+        var distRes = calculateChipProfiles(Number(buyIn), next, totalCount,);
         setChipProfiles(distRes);
     }
     
@@ -255,7 +255,7 @@ export default function Config() {
             </View>
 
             {/* Bottom Buttons */}
-            <View style={{flexDirection: "row", justifyContent: "space-evenly", width: Dimensions.get('window').width, marginTop: 15}}>
+            <View style={{flexDirection: "row", justifyContent: "space-evenly", marginTop: 15}}>
                 <RectangleButton width={110} height={50} fontSize={12} red={true} text="No Bank Payout"
                     style={{ marginLeft: 10, }}
                     onPress={()=>router.push('./payout')}

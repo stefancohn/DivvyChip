@@ -35,7 +35,7 @@ export const defDistributions : number[][] = [
 
 //create our provider wrapper which initializes our vals
 export const ChipProvider = ({ children } : {children : React.ReactNode}) => {
-    const [buyIn, setBuyIn] = useState('');
+    const [buyIn, setBuyIn] = useState('5');
     const [totalCount, setTotalCount] = useState(14);
     const [diffColors, setDiffColors] = useState<number>(2);
     const [countDistribution, setCountDistribution] = useState(defDistributions[0]);

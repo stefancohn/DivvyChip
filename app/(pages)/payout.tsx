@@ -29,8 +29,8 @@ export type PaymentRow = {
 }
 
 const defaultPayout : PayoutRow[] = [
-    {player: "Player 1", in: 5, out: 10, isOut: false}, 
-    {player: "Player 2", in: 5, out: 0, isOut: false},
+    {player: "Player 1", in: 0, out: 0, isOut: false}, 
+    {player: "Player 2", in: 0, out: 0, isOut: false},
 ];
 
 export default function Payout() {

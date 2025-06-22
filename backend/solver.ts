@@ -58,12 +58,12 @@ export function valueChange(
     };
     // lower bound: c_i >= origCoeffs[i] - 10
     const lbName = `lb_${name}`;
-    model.constraints[lbName] = greaterEq(origCoeffs[i] - 25 > 0 ? origCoeffs[i]-25 : 0);
+    model.constraints[lbName] = greaterEq(origCoeffs[i]);
     model.variables[name][lbName] = 1;
 
     // upper bound: c_i <= origCoeffs[i] + 10
     const ubName = `ub_${name}`;
-    model.constraints[ubName] = lessEq(origCoeffs[i] + 25);
+    model.constraints[ubName] = lessEq(i != origCoeffs.length-1 ? origCoeffs[i+1]-1: 25);
     model.variables[name][ubName] = 1;
   });
 

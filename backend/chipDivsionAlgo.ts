@@ -138,7 +138,6 @@ countDistribution : number[],):ChipProfile[]{
         var nums : number[] = chipProfiles.map((val)=>val.amount);
         var coeffs : number[] = chipProfiles.map((val)=>val.value);
         var valChange = valueChange(nums, coeffs, buyIn);
-        console.log(valChange);
 
         if (valChange) {
             for (const key in valChange) {
@@ -154,6 +153,131 @@ countDistribution : number[],):ChipProfile[]{
 
     return chipProfiles;
 }
+
+
+
+
+
+
+
+
+//algo to split chips!
+export function chipDistribution1(buyIn : number, diffChips: number, totalChips : number, 
+    countDistribution : number[], progressionFactor : number[], smallBlind : number):ChipProfile[]{
+        //when our preset does not land us what we need
+        function amountFill() : Boolean {
+            var coeffs : number[] = chipProfiles.map(prof => prof.value);
+            var addChips = currentTotal < buyIn;
+    
+            var result;
+    
+            //we need more chips
+            if (addChips) {
+                var target : number = buyIn-currentTotal; 
+    
+                result= positiveValueFill(target, coeffs);
+            } 
+            //we need to remove some chips
+            else {
+                var target : number = (buyIn-currentTotal)*-1;
+    
+                result = positiveValueFill(target, coeffs);
+            }
+    
+            //update chipprofiles
+            if (result) {
+                for (const key in result) {
+                    var idx = key.slice(1, key.length);
+                    var numericIdx = Number(idx);
+                    
+                    if (addChips) {
+                        chipProfiles[numericIdx].amount += result[key];
+                    } else {
+                        chipProfiles[numericIdx].amount -= result[key];
+                    }
+                }
+    
+                return true;
+            }
+    
+            return false;
+        }
+    
+        //convert to cents
+        buyIn*=100;
+
+        //high percentage:low val -> low percentage: high val
+        var chipProfiles: ChipProfile[] = new Array(diffChips);
+    
+        //smallest chip must atleast be the small blind
+        var currentVal : number = smallBlind; 
+        var currentCentsLeft : number= buyIn;
+    
+        //hard code first value as the small blind!
+        chipProfiles[0] = {value: Math.floor(currentVal), amount: Math.floor(totalChips*countDistribution[0]), 
+            distribution: countDistribution[0], color: colors[0]}
+    
+        currentCentsLeft -= (chipProfiles[0].amount*chipProfiles[0].value);
+        
+        var currentTotal = chipProfiles[0].value*chipProfiles[0].amount;
+        var currentAmount = chipProfiles[0].amount;
+        //initialize each chip profile, assigning it its distribution, amount, and val
+        //based on preset
+        for (var i =1; i < chipProfiles.length; i++) {
+            var chipsToUse : number = totalChips * countDistribution[i];
+    
+            currentVal*=progressionFactor[i];
+            currentVal = Math.round(currentVal*100)/100
+            currentCentsLeft-=(chipsToUse*currentVal);
+    
+            //floor 
+            currentVal = Math.floor(currentVal);
+            chipsToUse = Math.floor(chipsToUse);
+    
+            chipProfiles[i] = { 
+                value: currentVal, 
+                amount: chipsToUse, 
+                distribution: countDistribution[i],
+                color: colors[i],
+            };
+    
+            currentTotal += currentVal * chipsToUse;
+            currentAmount += chipsToUse;
+        }
+    
+        //once preset is done we are going to fix
+        //if currenttotal and buyin not synced
+        var couldFill : Boolean = true;
+        if (currentTotal != buyIn) {
+            couldFill = amountFill();
+        }
+    
+        //if we could not fill 
+        //run algorithm to see if we can change cent values
+        if (!couldFill) {
+            if (currentAmount != totalChips) {
+                var amountError = totalChips - currentAmount;
+                chipProfiles[0].amount+=amountError;
+            }
+    
+            var nums : number[] = chipProfiles.map((val)=>val.amount);
+            var coeffs : number[] = chipProfiles.map((val)=>val.value);
+            var valChange = valueChange(nums, coeffs, buyIn);
+    
+            if (valChange) {
+                for (const key in valChange) {
+                    var idx = key.slice(1, key.length);
+                    var numericIdx = Number(idx);
+                    
+                    chipProfiles[numericIdx].value = valChange[key];
+                }
+            } else {
+                chipProfiles[0].color = "null";
+            }
+        }
+    
+        return chipProfiles;
+    }
 
 const defCountDistributions : number[][][] = [
     [
@@ -184,13 +308,82 @@ const defCountDistributions : number[][][] = [
 //going to try 3-5 different count distributions with 2-3 different progression factors 
 //begin building solution - look for one that fits buyin and totalchips the best
 //if no solution found find closest to the desired buyin and chiptotal and sanity check it
-export function calculateChipProfiles(buyIn : number, diffChips: number, totalChips : number,) {
+export function calculateChipProfiles(buyIn : number, diffChips: number, totalChips : number,) : ChipProfile[] {
+    function calculateProgressionFactor() : number[] {
+        if (diffChips <= 2) {
+            return [1, 4];
+        } else if (diffChips <=3) {
+            return [1, 2, 2];
+        }
+        else {
+            return [1,2,2,1.5, 1.5, 1.5];
+        } 
+    }
+
+    function calculateSmallBlind() : number{
+        if (diffChips <= 3) {
+            return (centBuyIn * .05);
+        } else if (diffChips <= 5) {
+            return (centBuyIn*.025);
+        }
+        return (centBuyIn*0.025)
+    }; 
+
     const countDistrbutions = defCountDistributions[diffChips-2];
+    var progressionFactor = calculateProgressionFactor();
+    var centBuyIn : number = buyIn*100;
+
+    //different smallblinds for different prog factors
+    var sb = calculateSmallBlind();
+    var smallBlinds : number[] = Array();
+    smallBlinds.push(sb);
+    smallBlinds.push(sb+0.005);
+    smallBlinds.push(sb-0.005);
+
+    var solutions : ChipProfile[][] = new Array();
+
+    var noSol : ChipProfile[] = new Array();
+
+    var buyInDiff = Number.MAX_VALUE;
+    var totalDiff = Number.MAX_VALUE;
+    var solutionsPushed = 0;
 
     //iterate over distributions
     for (var i = 0; i < countDistrbutions.length; i++) {
+        for (var k = 0; k < smallBlinds.length; k++) {
+            var currentProfs = chipDistribution1(buyIn, diffChips, totalChips, countDistrbutions[i], progressionFactor, smallBlinds[k]);
 
+            //check current solution
+            var curBuyIn = 0;
+            var curTotal = 0;
+            for (var j = 0; j < currentProfs.length; j++) {
+                curTotal += currentProfs[j].amount;
+                curBuyIn += (currentProfs[j].amount*currentProfs[j].value);
+            }
+
+            //if its at desired buyIn and total return, else lets give it rank
+            if (curBuyIn == centBuyIn && curTotal == totalChips) return currentProfs
+            else {
+                //no sol found
+                if (currentProfs[0].color == "null") {
+                    noSol = currentProfs;
+                    continue;
+                }
+
+                var curBuyInDiff = Math.abs(centBuyIn - curBuyIn);
+                var curTotalDiff = Math.abs(totalChips - curTotal);
+
+                //if we have a total chips and buyin <= diffs, update best sol
+                if (curTotalDiff <= totalDiff && curBuyInDiff < buyInDiff) {
+                    solutions.push(currentProfs);
+                    solutionsPushed++;
+                }
+            }
+        }
     }
+
+    if (solutions[solutionsPushed-1] == null) return noSol;
+    return solutions[solutionsPushed-1];
 }
 
 //returns all different variations of distribution

@@ -2,7 +2,7 @@ import { View, Image, Text, TouchableOpacity } from "react-native";
 import {images, validBuyIn} from "../backend/constants"
 import NumInputBox from "./components/inputBox";
 import RectangleButton from "./components/rectangleButton";
-import { getDistributionVariants, chipDistribution } from "../backend/chipDivsionAlgo";
+import { getDistributionVariants, calculateChipProfiles,} from "../backend/chipDivsionAlgo";
 import { useRouter } from "expo-router";
 import { useChipContext } from "./components/ChipProvider";
 import { useEffect } from "react";
@@ -19,7 +19,7 @@ export default function Index() {
   const handleGo = () => {
     //validify
     if (validBuyIn(buyIn)) {
-      var distRes = chipDistribution(Number(buyIn), diffColors, totalCount, countDistribution,);
+      var distRes = calculateChipProfiles(Number(buyIn), diffColors, totalCount);
       setChipProfiles(distRes);
 
       (getDistributionVariants(countDistribution, diffColors));
@@ -34,10 +34,7 @@ export default function Index() {
   }
 
   useEffect(()=>{
-    //initialize chipprofiles just in case user goes to config, chip2cash, or no bankpayout
-    setBuyIn("5");
-
-    var distRes = chipDistribution(5, diffColors, totalCount, countDistribution,);
+    var distRes = calculateChipProfiles(Number(buyIn), diffColors, totalCount);
     setChipProfiles(distRes);
 
     (getDistributionVariants(countDistribution, diffColors));
