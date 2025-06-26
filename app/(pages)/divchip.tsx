@@ -1,8 +1,8 @@
-import { View, Text, Dimensions } from 'react-native';
+import { View, Text, } from 'react-native';
 import { useRouter } from 'expo-router';
-import { defDistributions, useChipContext } from '../components/ChipProvider';
+import { useChipContext } from '../components/ChipProvider';
 import NumInputBox from '../components/inputBox';
-import { getDistributionVariants, chipDistribution, calculateChipProfiles } from '@/backend/chipDivsionAlgo';
+import { calculateChipProfiles } from '@/backend/chipDivsionAlgo';
 import ChipDisplay from '../components/ChipDisplay';
 import CircleButton from '../components/CircleButton';
 import Slider from "@react-native-community/slider";
@@ -27,8 +27,7 @@ const getChipSize = (diffColors:number) : number => {
 export default function DivChip() {
     //get router and context vars
     const router = useRouter();
-    const {buyIn : buyIn, setBuyIn, diffColors, setDiffColors, totalCount, setTotalCount,
-    countDistribution, setCountDistribution, distributionVariants, setDistributionVariants,
+    const {buyIn : buyIn, setBuyIn, diffColors, setDiffColors, totalCount, setTotalCount, 
     setChipProfiles, chipProfiles} = useChipContext();
     const [wrapperDimensions, setWrapperDimensions] = useState({ width: 0, height: 0 });
     
@@ -45,10 +44,6 @@ export default function DivChip() {
         let next = (diffColors + 1)%6;
         if (next==0) next+=2;
         setDiffColors(next);
-
-        setCountDistribution(defDistributions[next-2]);
-
-        setDistributionVariants(getDistributionVariants(defDistributions[next-2],next));
 
         //update chip profiles
         var distRes = calculateChipProfiles(Number(buyIn), next, totalCount,);
@@ -74,21 +69,12 @@ export default function DivChip() {
     //convert the slider value to appropriate
     //change in distributions
     const onSliderChange = async (value: any) => {
-        const distRes = chipDistribution(Number(buyIn), diffColors, totalCount, distributionVariants[value]);
-        setChipProfiles(distRes);
+
     }
 
     //need to find current by searching variants for def
     const getSliderValue = () => {
-        function arraysEqual(a: number[], b: number[]) {
-            return a.every((val, index) => val === b[index]);
-        }
 
-        for (var i = 0; i < distributionVariants.length; i++) {
-            if (arraysEqual(defDistributions[diffColors-2], distributionVariants[i])){
-                return(i)
-            }
-        }
     }
 
     const newBuyIn = async (value : any) => {
@@ -172,6 +158,7 @@ export default function DivChip() {
             <View className='gap-4 items-center mt-5 mb-7' style={{flex: 0.8}}>
 
                 <CircleButton width={75} height={75} fontSize={18} text={diffColors + "\nChips"} onPress={changeDiffColor}/>
+                {/*
                 <Slider
                     style={{width: 270}}
                     thumbTintColor='gray'
@@ -183,11 +170,13 @@ export default function DivChip() {
                     value={getSliderValue()}
                     onValueChange={onSliderChange}
                 />
-                {/* Tags under slider */}
+                
+                {/* Tags under slider *\/}
                 <View style={{flexDirection: "row", justifyContent: "space-between"}}className="mt-[-0.85rem]">
                     <Text className="font-EncodeSans self-start justify-self-start text-red-600 text-[1rem] mr-12">Less Blind Chips</Text>
                     <Text className="font-EncodeSans self-end justify-self-end text-green-600 text-[1rem] ml-12">More Blind Chips</Text>
                 </View>
+                }
 
                 {/* New Buy In */}
                 <View style={{alignContent: "center", flexDirection: "column", gap:5}}>

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import {ChipProfile, getDistributionVariants} from "../../backend/chipDivsionAlgo";
+import {ChipProfile} from "../../backend/chipDivsionAlgo";
 
 //we need the buyin and chips to be global
 type ChipContextType = {
@@ -12,12 +12,6 @@ type ChipContextType = {
     diffColors : number;
     setDiffColors : (arg : number) => void;
 
-    countDistribution : number[];
-    setCountDistribution : (arg : number[]) => void;
-
-    distributionVariants : number[][];
-    setDistributionVariants : (arg : number[][]) => void; 
-
     chipProfiles : ChipProfile[];
     setChipProfiles : (arg : ChipProfile[])=>void;
 };
@@ -25,21 +19,13 @@ type ChipContextType = {
 //create our context
 const ChipContext = createContext<ChipContextType | null>(null);
 
-export const defDistributions : number[][] = [
-    [0.85, 0.15, 0, 0, 0, 0],
-    [0.6, 0.3, 0.1, 0, 0, 0],
-    [0.35, 0.35, 0.2, 0.1, 0, 0],
-    [.4, .25, 0.15,0.12,0.08,0],
-    [0.3, 0.25, 0.20, 0.15, 0.12, 0.08],
-]
 
 //create our provider wrapper which initializes our vals
 export const ChipProvider = ({ children } : {children : React.ReactNode}) => {
     const [buyIn, setBuyIn] = useState('5');
-    const [totalCount, setTotalCount] = useState(14);
+    const [totalCount, setTotalCount] = useState(20);
     const [diffColors, setDiffColors] = useState<number>(2);
-    const [countDistribution, setCountDistribution] = useState(defDistributions[0]);
-    const [distributionVariants, setDistributionVariants] = useState<number[][]>(getDistributionVariants(countDistribution, diffColors));
+
     const [chipProfiles, setChipProfiles] = useState<ChipProfile[]>([]);
 
     return (
@@ -47,8 +33,7 @@ export const ChipProvider = ({ children } : {children : React.ReactNode}) => {
         //taken as the paramter. so when we receive it, we just spit back
         //all of the children just wrapped with this for global use
         <ChipContext.Provider value={{buyIn, setBuyIn, totalCount, setTotalCount, 
-        diffColors, setDiffColors, countDistribution, setCountDistribution, distributionVariants, 
-        setDistributionVariants, chipProfiles, setChipProfiles}}>
+        diffColors, setDiffColors, chipProfiles, setChipProfiles}}>
             {children}
         </ChipContext.Provider>
     )

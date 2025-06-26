@@ -1,11 +1,11 @@
 import { solve } from "yalps"
-import { lessEq, equalTo, greaterEq, inRange } from "yalps"
-import { Model, Constraint, Coefficients, OptimizationDirection, Options } from "yalps"
+import { lessEq, equalTo, greaterEq } from "yalps"
+import { Model } from "yalps"
 
-export function positiveValueFill(target: number, coeffs: number[]) {
+export function positiveValueFill(target: number, coeffs: number[], ub? : number[]) {
   const varNames = coeffs.map((_, i) => `x${i}`)
 
-  const model : Model = {
+  const model : any = {
     direction: "minimize",
     objective: "dummy",
     constraints: {
@@ -14,11 +14,21 @@ export function positiveValueFill(target: number, coeffs: number[]) {
     variables: Object.fromEntries(
       varNames.map((name,i)=>[
         name,
-        {targetEq: coeffs[i]}
+        {
+          targetEq: coeffs[i],
+          ubConstraint: ub == null ? Infinity : ub[i],
+        }
       ])
     ),
     integers: varNames,
     binaries: [],
+  };
+
+  if (ub != null) {
+    varNames.forEach((name, i) => {
+      model.constraints[`ub_${name}`] = lessEq(ub[i]);
+      model.variables[name][`ub_${name}`] = 1;
+    });
   }
 
   const sol = solve(model);

@@ -10,156 +10,6 @@ export interface ChipProfile {
 
 var colors : string[] = ["white", "red", "green", "gray", "blue", "orange"]
 
-//algo to split chips!
-export function chipDistribution(buyIn : number, diffChips: number, totalChips : number, 
-countDistribution : number[],):ChipProfile[]{
-    function calculateSmallBlind() : number{
-        if (diffChips <= 3) {
-            return (buyIn * .05);
-        } else if (diffChips <= 5) {
-            return (buyIn*.025);
-        }
-        return (buyIn*0.025)
-    }; 
-
-    function calculateProgressionFactor() : number[] {
-        if (diffChips <= 2) {
-            return [1, 4];
-        } else if (diffChips <=3) {
-            return [1, 2, 2];
-        }
-        else {
-            return [1,2,2,1.5, 1.5, 1.5];
-        } 
-    }
-
-    //when our preset does not land us what we need
-    function amountFill() : Boolean {
-        var coeffs : number[] = chipProfiles.map(prof => prof.value);
-        var addChips = currentTotal < buyIn;
-
-        var result;
-
-        //we need more chips
-        if (addChips) {
-            var target : number = buyIn-currentTotal; 
-
-            result= positiveValueFill(target, coeffs);
-        } 
-        //we need to remove some chips
-        else {
-            var target : number = (buyIn-currentTotal)*-1;
-
-            result = positiveValueFill(target, coeffs);
-        }
-
-        //update chipprofiles
-        if (result) {
-            for (const key in result) {
-                var idx = key.slice(1, key.length);
-                var numericIdx = Number(idx);
-                
-                if (addChips) {
-                    chipProfiles[numericIdx].amount += result[key];
-                } else {
-                    chipProfiles[numericIdx].amount -= result[key];
-                }
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    //convert to cents
-    buyIn*=100;
-
-    //get blind for starting chip
-    var smallBlind = calculateSmallBlind();
-
-    //TODO: code different progression factors
-    var progressionFactor = calculateProgressionFactor();
-
-    //high percentage:low val -> low percentage: high val
-    var chipProfiles: ChipProfile[] = new Array(diffChips);
-
-    //smallest chip must atleast be the small blind
-    var currentVal : number = smallBlind; 
-    var currentCentsLeft : number= buyIn;
-
-    //hard code first value as the small blind!
-    chipProfiles[0] = {value: Math.floor(currentVal), amount: Math.floor(totalChips*countDistribution[0]), 
-        distribution: countDistribution[0], color: colors[0]}
-
-    currentCentsLeft -= (chipProfiles[0].amount*chipProfiles[0].value);
-    
-    var currentTotal = chipProfiles[0].value*chipProfiles[0].amount;
-    var currentAmount = chipProfiles[0].amount;
-    //initialize each chip profile, assigning it its distribution, amount, and val
-    //based on preset
-    for (var i =1; i < chipProfiles.length; i++) {
-        var chipsToUse : number = totalChips * countDistribution[i];
-
-        currentVal*=progressionFactor[i];
-        currentVal = Math.round(currentVal*100)/100
-        currentCentsLeft-=(chipsToUse*currentVal);
-
-        //floor 
-        currentVal = Math.floor(currentVal);
-        chipsToUse = Math.floor(chipsToUse);
-
-        chipProfiles[i] = { 
-            value: currentVal, 
-            amount: chipsToUse, 
-            distribution: countDistribution[i],
-            color: colors[i],
-        };
-
-        currentTotal += currentVal * chipsToUse;
-        currentAmount += chipsToUse;
-    }
-
-    //once preset is done we are going to fix
-    //if currenttotal and buyin not synced
-    var couldFill : Boolean = true;
-    if (currentTotal != buyIn) {
-        couldFill = amountFill();
-    }
-
-    //if we could not fill 
-    //run algorithm to see if we can change cent values
-    if (!couldFill) {
-        if (currentAmount != totalChips) {
-            var amountError = totalChips - currentAmount;
-            chipProfiles[0].amount+=amountError;
-        }
-
-        var nums : number[] = chipProfiles.map((val)=>val.amount);
-        var coeffs : number[] = chipProfiles.map((val)=>val.value);
-        var valChange = valueChange(nums, coeffs, buyIn);
-
-        if (valChange) {
-            for (const key in valChange) {
-                var idx = key.slice(1, key.length);
-                var numericIdx = Number(idx);
-                
-                chipProfiles[numericIdx].value = valChange[key];
-            }
-        } else {
-            chipProfiles[0].color = "null";
-        }
-    }
-
-    return chipProfiles;
-}
-
-
-
-
-
-
-
 
 //algo to split chips!
 export function chipDistribution1(buyIn : number, diffChips: number, totalChips : number, 
@@ -179,9 +29,10 @@ export function chipDistribution1(buyIn : number, diffChips: number, totalChips 
             } 
             //we need to remove some chips
             else {
+                var ub : number[] = chipProfiles.map(prof => prof.amount-1)
                 var target : number = (buyIn-currentTotal)*-1;
     
-                result = positiveValueFill(target, coeffs);
+                result = positiveValueFill(target, coeffs, ub);
             }
     
             //update chipprofiles
@@ -283,7 +134,8 @@ const defCountDistributions : number[][][] = [
     [
         [0.85, 0.15, 0, 0, 0, 0],
         [0.80, 0.20, 0, 0, 0, 0],
-        [0.75, 0.15, 0, 0, 0, 0],
+        [0.75, 0.25, 0, 0, 0, 0],
+        [0.70, 0.30, 0, 0, 0, 0],
     ],
     [
         [0.55, 0.35, 0.1, 0, 0, 0],
@@ -295,15 +147,23 @@ const defCountDistributions : number[][][] = [
         [0.40, 0.30, 0.20, 0.10, 0, 0],
         [0.35, 0.35, 0.2, 0.1, 0, 0],
         [0.30, 0.30, 0.25, 0.15, 0, 0],
+        [0.35, 0.30, 0.20, 0.15, 0, 0],
+        [0.40, 0.25, 0.20, 0.15, 0, 0],
+        [0.30, 0.30, 0.25, 0.15, 0, 0],
     ],
     [
         [.4, .25, 0.15,0.12,0.08,0],
         [0.30, 0.25, 0.20, 0.15, 0.10, 0],
         [0.45, 0.25, 0.15, 0.10, 0.05, 0],
         [0.25, 0.20, 0.20, 0.20, 0.15, 0],
-        [0.38, 0.22, 0.20, 0.12, 0.08, 0]
+        [0.38, 0.22, 0.20, 0.12, 0.08, 0],
+        [0.30, 0.25, 0.20, 0.15, 0.10, 0],
+        [0.35, 0.25, 0.20, 0.12, 0.08, 0],
+        [0.25, 0.25, 0.25, 0.15, 0.10, 0],
     ],
 ]
+
+
 
 //going to try 3-5 different count distributions with 2-3 different progression factors 
 //begin building solution - look for one that fits buyin and totalchips the best
@@ -321,12 +181,28 @@ export function calculateChipProfiles(buyIn : number, diffChips: number, totalCh
     }
 
     function calculateSmallBlind() : number{
+        // Base calculation from buy-in
+        let sbPercentage: number;
         if (diffChips <= 3) {
-            return (centBuyIn * .05);
-        } else if (diffChips <= 5) {
-            return (centBuyIn*.025);
-        }
-        return (centBuyIn*0.025)
+            sbPercentage = 0.05; // 5% of buy-in
+        } else {
+            sbPercentage = 0.025; // 2.5% of buy-in
+        } 
+        // Adjust based on total chips
+        const chipAdjustment = Math.max(0.1, Math.min(1, 50 / totalChips));
+        
+        // Calculate initial small blind
+        let smallBlind = (centBuyIn * sbPercentage * chipAdjustment);
+
+        // Ensure minimum and maximum values
+        const minValue = 1; // Minimum 1 cent
+        const maxValue = centBuyIn * 0.1; // Maximum 10% of buy-in
+        
+        // Clamp the small blind between min and max values
+        smallBlind = Math.max(minValue, Math.min(maxValue, smallBlind));
+        
+        // Round to nearest cent
+        return Math.floor(smallBlind);
     }; 
 
     const countDistrbutions = defCountDistributions[diffChips-2];
@@ -384,58 +260,6 @@ export function calculateChipProfiles(buyIn : number, diffChips: number, totalCh
 
     if (solutions[solutionsPushed-1] == null) return noSol;
     return solutions[solutionsPushed-1];
-}
-
-//returns all different variations of distribution
-export function getDistributionVariants(distribution : number[], diffColors : number) {
-    var allVariants : number[][] = [];
-
-    //shallow copy 
-    var distributionC = [...distribution];
-
-    allVariants.push([...distributionC]);
-
-    //keep taking away from dist[0] until it reaches
-    //0.05
-    var counter = 1;
-    while(distributionC[0] > 0.05) {
-        distributionC[0]-=0.05;
-        distributionC[counter]+=0.05;
-
-        //round
-        distributionC[0] = Math.round(distributionC[0]*100)/100;
-        distributionC[counter] = Math.round(distributionC[counter]*100)/100;
-
-        counter++;
-        if (counter>=diffColors) {
-            counter=1; 
-        }
-        allVariants.push([...distributionC]);
-    }
-
-    //reverse the list so it is in proper order!
-    allVariants.reverse();
-
-    distributionC = [...distribution]; //reset to og arr
-    //keep adding to dist[0] until max element reaches .05
-    var maxE = diffColors-1;
-    var incCounter = maxE;
-    while(distributionC[maxE] > 0.05) {
-        distributionC[0]+=0.05;
-        distributionC[incCounter]-=0.05;
-
-        //round
-        distributionC[0] = Math.round(distributionC[0]*100)/100;
-        distributionC[incCounter] = Math.round(distributionC[incCounter]*100)/100;
-
-        incCounter--;
-        if (incCounter <= 0) {
-            incCounter = maxE;
-        }
-        allVariants.push([...distributionC]);
-    }
-
-    return allVariants;
 }
 
 

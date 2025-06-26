@@ -2,7 +2,7 @@ import { View, Image, Text, TouchableOpacity } from "react-native";
 import {images, validBuyIn} from "../backend/constants"
 import NumInputBox from "./components/inputBox";
 import RectangleButton from "./components/rectangleButton";
-import { getDistributionVariants, calculateChipProfiles,} from "../backend/chipDivsionAlgo";
+import { calculateChipProfiles,} from "../backend/chipDivsionAlgo";
 import { useRouter } from "expo-router";
 import { useChipContext } from "./components/ChipProvider";
 import { useEffect } from "react";
@@ -13,7 +13,7 @@ export default function Index() {
   //get router and context vars
   const router = useRouter();
   const {buyIn : buyIn, setBuyIn, diffColors, totalCount, 
-    countDistribution, setChipProfiles,} = useChipContext();
+    setChipProfiles,} = useChipContext();
 
   //func for when go gets pressed
   const handleGo = () => {
@@ -21,8 +21,6 @@ export default function Index() {
     if (validBuyIn(buyIn)) {
       var distRes = calculateChipProfiles(Number(buyIn), diffColors, totalCount);
       setChipProfiles(distRes);
-
-      (getDistributionVariants(countDistribution, diffColors));
 
       router.push('./divchip');
     } 
@@ -36,8 +34,6 @@ export default function Index() {
   useEffect(()=>{
     var distRes = calculateChipProfiles(Number(buyIn), diffColors, totalCount);
     setChipProfiles(distRes);
-
-    (getDistributionVariants(countDistribution, diffColors));
   }, [])
  
 

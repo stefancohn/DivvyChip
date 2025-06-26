@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { defDistributions, useChipContext } from '../components/ChipProvider';
+import { useChipContext } from '../components/ChipProvider';
 import NumInputBox from '../components/inputBox';
 import { useEffect, useState } from 'react';
 import RectangleButton from '../components/rectangleButton';
 import CircleButton from '../components/CircleButton';
-import { calculateChipProfiles, getDistributionVariants} from '@/backend/chipDivsionAlgo';
+import { calculateChipProfiles,} from '@/backend/chipDivsionAlgo';
 import { colorMap } from '@/backend/constants';
 import ModalSelector from 'react-native-modal-selector'
 import Animated, { FadeIn } from 'react-native-reanimated';
@@ -49,7 +49,6 @@ const colorData : ColorOption[] = [
 
 export default function Config() {
     const {buyIn : buyIn, setBuyIn, diffColors, setDiffColors, totalCount, setTotalCount,
-        countDistribution, setCountDistribution, distributionVariants, setDistributionVariants,
         setChipProfiles, chipProfiles} = useChipContext();
     
     var [unselectedColors, setUnseletedColors] = useState<ColorOption[]>(colorData);
@@ -123,10 +122,6 @@ export default function Config() {
         let next = (diffColors + 1)%6;
         if (next==0) next+=2;
         setDiffColors(next);
-
-        setCountDistribution(defDistributions[next-2]);
-
-        setDistributionVariants(getDistributionVariants(defDistributions[next-2],next));
 
         //update chip profiles
         var distRes = calculateChipProfiles(Number(buyIn), next, totalCount,);
