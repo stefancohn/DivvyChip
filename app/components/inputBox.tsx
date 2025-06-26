@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Keyboard, TextInput, View } from "react-native";
 
 type Props = {
@@ -17,6 +17,11 @@ type Props = {
 export default function NumInputBox({width, height, fontSize, setValue, placeholderVal, onBlur, index, value, isDecimal=true} : Props) {
     const [focused, setFocused] = useState(true);
     const [input, setInput] = useState("");
+
+    useEffect(() => {
+        setInput("");
+        setFocused(true);
+    }, [placeholderVal, !focused]);
     
     return (
         /* Wrap in this to get inside border */
@@ -33,21 +38,21 @@ export default function NumInputBox({width, height, fontSize, setValue, placehol
                 returnKeyType="done"
                 onSubmitEditing={Keyboard.dismiss}
                 onChangeText={(text) => {
-                    if (setValue) {
+                    if (setValue && !focused) {
                         setValue(text, index);
                     } 
                     setInput(text);
                 }}
                 placeholder={placeholderVal && focused ? placeholderVal : ""}
                 placeholderTextColor={"black"}
-                onFocus={() => setFocused(false)}
+                onFocus={() => {setFocused(false);}}
                 onBlur={() => {
                     setFocused(true);
                     if (onBlur) {
                         onBlur(input);
                     }
                 }}
-                value={value}
+                value={input || value}
             />
         </View>
     );

@@ -15,42 +15,41 @@ var colors : string[] = ["white", "red", "green", "gray", "blue", "orange"]
 export function chipDistribution1(buyIn : number, diffChips: number, totalChips : number, 
     countDistribution : number[], progressionFactor : number[], smallBlind : number):ChipProfile[]{
         //when our preset does not land us what we need
-        function amountFill() : Boolean {
-            var coeffs : number[] = chipProfiles.map(prof => prof.value);
-            var addChips = currentTotal < buyIn;
-    
-            var result;
-    
-            //we need more chips
+        function amountFill(): Boolean {
+            const coeffs: number[] = chipProfiles.map(prof => prof.value);
+            const addChips = currentTotal < buyIn;
+            
+            let result;
+            
+            // Calculate minimum chips needed for each denomination
+            const minChips = chipProfiles.map(prof => Math.max(1, Math.floor(prof.amount * 0.3))); // Keep at least 30% of original chips
+            
             if (addChips) {
-                var target : number = buyIn-currentTotal; 
-    
-                result= positiveValueFill(target, coeffs);
-            } 
-            //we need to remove some chips
-            else {
-                var ub : number[] = chipProfiles.map(prof => prof.amount-1)
-                var target : number = (buyIn-currentTotal)*-1;
-    
-                result = positiveValueFill(target, coeffs, ub);
+                const target: number = buyIn - currentTotal;
+                result = positiveValueFill(target, coeffs, undefined, minChips);
+            } else {
+                const currentAmounts = chipProfiles.map(prof => prof.amount);
+                const maxRemovable = currentAmounts.map((amount, i) => 
+                    Math.max(0, amount - minChips[i])
+                );
+                
+                const target: number = (buyIn - currentTotal) * -1;
+                result = positiveValueFill(target, coeffs, maxRemovable, Array(coeffs.length).fill(0));
             }
-    
-            //update chipprofiles
+        
             if (result) {
                 for (const key in result) {
-                    var idx = key.slice(1, key.length);
-                    var numericIdx = Number(idx);
+                    const idx = Number(key.slice(1));
+                    const change = Math.floor(result[key]); // Ensure whole numbers
                     
-                    if (addChips) {
-                        chipProfiles[numericIdx].amount += result[key];
-                    } else {
-                        chipProfiles[numericIdx].amount -= result[key];
+                    // Verify the change won't reduce below minimum
+                    if (addChips || (chipProfiles[idx].amount - change >= minChips[idx])) {
+                        chipProfiles[idx].amount += addChips ? change : -change;
                     }
                 }
-    
                 return true;
             }
-    
+        
             return false;
         }
     
@@ -171,7 +170,7 @@ const defCountDistributions : number[][][] = [
 export function calculateChipProfiles(buyIn : number, diffChips: number, totalChips : number,) : ChipProfile[] {
     function calculateProgressionFactor() : number[] {
         if (diffChips <= 2) {
-            return [1, 4];
+            return [1, 2];
         } else if (diffChips <=3) {
             return [1, 2, 2];
         }

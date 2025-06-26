@@ -2,21 +2,24 @@ import { solve } from "yalps"
 import { lessEq, equalTo, greaterEq } from "yalps"
 import { Model } from "yalps"
 
-export function positiveValueFill(target: number, coeffs: number[], ub? : number[]) {
-  const varNames = coeffs.map((_, i) => `x${i}`)
+export function positiveValueFill(target: number, coeffs: number[], ub?: number[], lb?: number[]) {
+  const varNames = coeffs.map((_, i) => `x${i}`);
 
-  const model : any = {
+  const model: any = {
     direction: "minimize",
     objective: "dummy",
     constraints: {
-      targetEq: equalTo(target)
+      targetEq: equalTo(target),
+      totalChips: greaterEq(0) // Ensure we don't remove too many chips
     },
     variables: Object.fromEntries(
-      varNames.map((name,i)=>[
+      varNames.map((name, i) => [
         name,
         {
           targetEq: coeffs[i],
-          ubConstraint: ub == null ? Infinity : ub[i],
+          totalChips: 1,
+          ubConstraint: ub ? ub[i] : Infinity,
+          lbConstraint: lb ? lb[i] : 0, // Ensure we keep minimum number of chips
         }
       ])
     ),
@@ -24,19 +27,24 @@ export function positiveValueFill(target: number, coeffs: number[], ub? : number
     binaries: [],
   };
 
-  if (ub != null) {
-    varNames.forEach((name, i) => {
+  // Add constraints for upper and lower bounds
+  varNames.forEach((name, i) => {
+    if (ub) {
       model.constraints[`ub_${name}`] = lessEq(ub[i]);
       model.variables[name][`ub_${name}`] = 1;
-    });
-  }
+    }
+    if (lb) {
+      model.constraints[`lb_${name}`] = greaterEq(lb[i]);
+      model.variables[name][`lb_${name}`] = 1;
+    }
+  });
 
   const sol = solve(model);
 
   if (sol.status === "optimal") {
-    return Object.fromEntries(sol.variables as [string, number][])
+    return Object.fromEntries(sol.variables as [string, number][]);
   } else {
-    return null
+    return null;
   }
 }
 
